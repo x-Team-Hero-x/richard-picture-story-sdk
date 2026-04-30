@@ -1,0 +1,22 @@
+{
+	"name": "io.github.x-team-hero-x.richard-picture-story-sdk",
+	"version": "0.0.1",
+	"displayName": "Richard Picture story SDK",
+	"description": "An SDK to create separately packaged stories",
+	"dependencies": {
+		"com.unity.localization": "1.5.9",
+		"com.unity.addressables": "2.8.0"
+	},
+	"keywords": [
+		"visual novel",
+		"VN",
+		"story"
+	],
+	"type": "tool",
+	"scripts": {},
+	"author": {
+		"name": "Hero Team",
+		"email": "kezzyhko@gmail.com",
+		"url": "https://github.com/x-Team-Hero-x/"
+	}
+}

@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Localization;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
@@ -12,32 +15,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		public required string id = "com.example.story";
 		public required List<Locale> locales = new();
 
-		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)
+		private void OnEnable()
 		{
-			var entry = table.SharedData.AddKey(key);
-			reference.SetReference(table.TableCollectionNameReference, entry.Key);
-		}
-
-		private void OnWizardCreate()
-		{
-			if (AssetDatabase.IsValidFolder($"Assets/{id}"))
-			{
-				throw new ArgumentException($"Folder 'Assets/{id}' already exists", nameof(id));
-			}
-			
-			locales = locales.Distinct().ToList();
-			
-			var storyFolderGuid = AssetDatabase.CreateFolder("Assets", id);
-			var storyInfo = CreateInstance<StoryInfo>();
-			
-			var localizationFolderGuid = AssetDatabase.CreateFolder($"Assets/{id}", "Localization");
-			var strings = LocalizationEditorSettings.CreateStringTableCollection("strings", $"Assets/{id}/Localization", locales);
-			var assets = LocalizationEditorSettings.CreateAssetTableCollection("assets", $"Assets/{id}/Localization", locales);
-
-			NewLocalized(storyInfo.icon, assets, "info.icon");
-			NewLocalized(storyInfo.title, strings, "info.title");
-			NewLocalized(storyInfo.description, strings, "info.description");
-			AssetDatabase.CreateAsset(storyInfo, $"Assets/{id}/StoryInfo.asset");
+			OnValidate();
 		}
 
 		private void OnValidate()
@@ -51,9 +31,45 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			}
 		}
 
-		private void OnEnable()
+		private void OnWizardCreate()
 		{
-			OnValidate();
+			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
+			
+			// Check inputs
+			if (AssetDatabase.IsValidFolder($"Assets/{id}"))
+			{
+				throw new ArgumentException($"Folder 'Assets/{id}' already exists", nameof(id));
+			}
+			if (addressableSettings.FindGroup(id) is not null)
+			{
+				throw new ArgumentException($"Addressable group '{id}' already exists", nameof(id));
+			}
+			locales = locales.Distinct().ToList();
+			
+			// create template structure
+			var storyFolderGuid = AssetDatabase.CreateFolder("Assets", id);
+			var localizationFolderGuid = AssetDatabase.CreateFolder($"Assets/{id}", "Localization");
+			var strings = LocalizationEditorSettings.CreateStringTableCollection("strings", $"Assets/{id}/Localization", locales);
+			var assets = LocalizationEditorSettings.CreateAssetTableCollection("assets", $"Assets/{id}/Localization", locales);
+
+			// create main manifest asset
+			var storyInfo = CreateInstance<StoryInfo>();
+			NewLocalized(storyInfo.icon, assets, "info.icon");
+			NewLocalized(storyInfo.title, strings, "info.title");
+			NewLocalized(storyInfo.description, strings, "info.description");
+			AssetDatabase.CreateAsset(storyInfo, $"Assets/{id}/StoryInfo.asset");
+			
+			// manage addressables
+			var addressableGroup = addressableSettings.CreateGroup(id, false, true, false, null);
+			var path = AssetDatabase.GetAssetPath(storyInfo);
+			var guid = AssetDatabase.AssetPathToGUID(path);
+			addressableSettings.CreateOrMoveEntry(guid, addressableGroup, true);
+		}
+
+		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)
+		{
+			var entry = table.SharedData.AddKey(key);
+			reference.SetReference(table.TableCollectionNameReference, entry.Key);
 		}
 	}
 }

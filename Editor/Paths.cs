@@ -2,59 +2,60 @@ using System;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor;
-
-public static class Paths
+namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
-	public const string SdkFolder = "Assets/StorySDK";
-	public const string StoriesFolder = "Assets/StorySDK/Stories";
-	public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
-
-	public static (string storyFolder, string localizationFolder, string storyInfoAsset, string stringsTable, string assetsTable) GetStoryPaths(string id)
+	public static class Paths
 	{
-		var storyFolderPath = $"{StoriesFolder}/{id}";
-		var localizationFolderPath = $"{storyFolderPath}/Localization";
-		var storyInfoAssetPath = $"{storyFolderPath}/StoryInfo.asset";
-		var stringsTableName = $"{id}-strings";
-		var assetsTableName = $"{id}-assets";
-		return (storyFolderPath, localizationFolderPath, storyInfoAssetPath, stringsTableName, assetsTableName);
-	}
+		public const string SdkFolder = "Assets/StorySDK";
+		public const string StoriesFolder = "Assets/StorySDK/Stories";
+		public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
 
-	public static void EnsureFolderExists(string folderPath)
-	{
-		if (folderPath == "Assets")
+		public static (string storyFolder, string localizationFolder, string storyInfoAsset, string stringsTable, string assetsTable) GetStoryPaths(string id)
 		{
-			return;
+			var storyFolderPath = $"{StoriesFolder}/{id}";
+			var localizationFolderPath = $"{storyFolderPath}/Localization";
+			var storyInfoAssetPath = $"{storyFolderPath}/StoryInfo.asset";
+			var stringsTableName = $"{id}.strings";
+			var assetsTableName = $"{id}.assets";
+			return (storyFolderPath, localizationFolderPath, storyInfoAssetPath, stringsTableName, assetsTableName);
 		}
-			
-		if (!folderPath.StartsWith("Assets/"))
-		{
-			throw new ArgumentException("Folder should start with 'Assets/'", nameof(folderPath));
-		}
-			
-		if (AssetDatabase.IsValidFolder(folderPath))
-		{
-			return;
-		}
-			
-		var lastSlashIndex = folderPath.LastIndexOf('/');
-		var parentPath = folderPath[..lastSlashIndex];
-		var folderName = folderPath[(lastSlashIndex+1)..];
-		EnsureFolderExists(parentPath);
-		AssetDatabase.CreateFolder(parentPath, folderName);
-	}
 
-	public static GUID GetAssetGuid(Object asset)
-	{
-		var path = AssetDatabase.GetAssetPath(asset);
-		var guid = AssetDatabase.GUIDFromAssetPath(path);
-		return guid;
-	}
+		public static void EnsureFolderExists(string folderPath)
+		{
+			if (folderPath == "Assets")
+			{
+				return;
+			}
+			
+			if (!folderPath.StartsWith("Assets/"))
+			{
+				throw new ArgumentException("Folder should start with 'Assets/'", nameof(folderPath));
+			}
+			
+			if (AssetDatabase.IsValidFolder(folderPath))
+			{
+				return;
+			}
+			
+			var lastSlashIndex = folderPath.LastIndexOf('/');
+			var parentPath = folderPath[..lastSlashIndex];
+			var folderName = folderPath[(lastSlashIndex+1)..];
+			EnsureFolderExists(parentPath);
+			AssetDatabase.CreateFolder(parentPath, folderName);
+		}
 
-	public static string GetAssetGuidString(Object asset)
-	{
-		var path = AssetDatabase.GetAssetPath(asset);
-		var guid = AssetDatabase.AssetPathToGUID(path);
-		return guid;
+		public static GUID GetAssetGuid(Object asset)
+		{
+			var path = AssetDatabase.GetAssetPath(asset);
+			var guid = AssetDatabase.GUIDFromAssetPath(path);
+			return guid;
+		}
+
+		public static string GetAssetGuidString(Object asset)
+		{
+			var path = AssetDatabase.GetAssetPath(asset);
+			var guid = AssetDatabase.AssetPathToGUID(path);
+			return guid;
+		}
 	}
 }

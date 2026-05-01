@@ -7,6 +7,7 @@ using UnityEngine;
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
 	[CustomEditor(typeof(StoryInfo))]
+	[CanEditMultipleObjects]
 	public class StoryInfoEditor : UnityEditor.Editor
 	{
 		[SerializeField] private bool isControlsFoldoutOpen = true;
@@ -31,9 +32,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			foreach (var addressableGroup in addressableSettings.groups)
 			{
 				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
-				var isExactName = addressableGroup.Name == storyInfo.id;
-				var isPrefixedName = addressableGroup.Name.StartsWith($"{storyInfo.id}-");
-				schema.IncludeInBuild = isExactName || isPrefixedName;
+				schema.IncludeInBuild = addressableGroup.Name.StartsWith($"{storyInfo.id}-");
 			}
 			
 			Debug.Log($"Building story '{storyInfo.id}'...");

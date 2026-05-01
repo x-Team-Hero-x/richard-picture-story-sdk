@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Localization;
 using UnityEngine.AddressableAssets;
@@ -33,7 +34,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 
 		private void OnWizardCreate()
 		{
-			// Get inferred properties
+			// Calculate inferred properties
 			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
 			var storyPaths = Paths.GetStoryPaths(id);
 			
@@ -51,9 +52,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			// Create template structure
 			Paths.EnsureFolderExists(storyPaths.storyFolder);
 			Paths.EnsureFolderExists(storyPaths.localizationFolder);
+			var addressableGroup = addressableSettings.CreateGroup(storyPaths.mainGroup, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
 			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
 			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
-
+			
 			// Create main manifest asset
 			var storyInfo = CreateInstance<StoryInfo>();
 			storyInfo.id = id;
@@ -61,10 +63,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			NewLocalized(storyInfo.title, strings, "info.title");
 			NewLocalized(storyInfo.description, strings, "info.description");
 			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
-			
-			// Manage addressables
-			var addressableGroup = addressableSettings.FindGroup(id);
-			addressableGroup ??= addressableSettings.CreateGroup(id, false, true, false, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
 			addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
 		}
 

@@ -1,7 +1,7 @@
-using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
@@ -27,43 +27,22 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 
 		private static void BuildStory(StoryInfo storyInfo)
 		{
-			var originalSettings = AddressableAssetSettingsDefaultObject.Settings;
-			var filteredSettings = Instantiate(originalSettings);
-			
-			var entries = filteredSettings.groups.SelectMany(group => group.entries).ToArray();
-			var dependencyPaths = AssetDatabase.GetDependencies(AssetDatabase.GetAssetPath(storyInfo)).ToHashSet();
-			foreach (var entry in entries)
+			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
+			foreach (var addressableGroup in addressableSettings.groups)
 			{
-				if (!dependencyPaths.Contains(entry.AssetPath))
-				{
-					entry.parentGroup.RemoveAssetEntry(entry);
-				}
-			}
-
-			var emptyGroups = filteredSettings.groups.Where(group => group.entries.Count == 0).ToArray();
-			foreach (var group in emptyGroups)
-			{
-				filteredSettings.RemoveGroup(group);
+				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
+				var isExactName = addressableGroup.Name == storyInfo.id;
+				var isPrefixedName = addressableGroup.Name.StartsWith($"{storyInfo.id}-");
+				schema.IncludeInBuild = isExactName || isPrefixedName;
 			}
 			
-			try
+			Debug.Log($"Building story '{storyInfo.id}'...");
+			AddressableAssetSettings.BuildPlayerContent(out var buildResult);
+			if (!string.IsNullOrEmpty(buildResult.Error))
 			{
-				Debug.Log($"Building story '{storyInfo.id}'...");
-				AssetDatabase.CreateAsset(filteredSettings, "Assets/TemporaryAddressablesBuildSettings.asset");
-				AddressableAssetSettingsDefaultObject.Settings = filteredSettings;
-				AddressableAssetSettings.BuildPlayerContent(out var buildResult);
-				Debug.Log($"Story '{storyInfo.id}' was built successfully in {buildResult.Duration}");
+				Debug.LogError($"Story build for '{storyInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
 			}
-			catch
-			{
-				Debug.Log($"Could not build story '{storyInfo.id}'");
-				throw;
-			}
-			finally
-			{
-				AddressableAssetSettingsDefaultObject.Settings = originalSettings;
-				AssetDatabase.DeleteAsset("Assets/TemporaryAddressablesBuildSettings.asset");
-			}
+			Debug.Log($"Story '{storyInfo.id}' was built successfully in {buildResult.Duration}");
 		}
 	}
 }

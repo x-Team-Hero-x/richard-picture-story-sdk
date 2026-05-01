@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
@@ -37,30 +36,13 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		
 		private static void CreateAssetFolders()
 		{
-			EnsureFolderExists("Assets/StorySDK");
-			EnsureFolderExists("Assets/StorySDK/Stories");
-		}
-
-		private static void EnsureFolderExists(string folderPath)
-		{
-			if (!folderPath.StartsWith("Assets/"))
-			{
-				throw new ArgumentException("Folder should start with 'Assets/'", nameof(folderPath));
-			}
-			
-			var lastSlashIndex = folderPath.LastIndexOf('/');
-			var parentPath = folderPath[..lastSlashIndex];
-			var folderName = folderPath[(lastSlashIndex+1)..];
-			if (!AssetDatabase.IsValidFolder(folderPath))
-			{
-				AssetDatabase.CreateFolder(parentPath, folderName);
-			}
+			Paths.EnsureFolderExists(Paths.SdkFolder);
+			Paths.EnsureFolderExists(Paths.StoriesFolder);
 		}
 		
 		private static void CreateGroupNameResolver()
 		{
-			const string path = "Assets/StorySDK/GroupNameResolver.asset";
-			if (AssetDatabase.AssetPathExists(path))
+			if (AssetDatabase.AssetPathExists(Paths.GroupNameResolver))
 			{
 				return;
 			}
@@ -72,7 +54,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			instance.AssetResolver = resolver;
 			instance.StringTablesResolver = resolver;
 
-			AssetDatabase.CreateAsset(instance, path);
+			AssetDatabase.CreateAsset(instance, Paths.GroupNameResolver);
 			AddressableGroupRules.Instance = instance;
 		}
 	}

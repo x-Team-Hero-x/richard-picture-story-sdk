@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Localization;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
@@ -32,12 +33,14 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 
 		private void OnWizardCreate()
 		{
+			// Get inferred properties
 			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
+			var storyPaths = Paths.GetStoryPaths(id);
 			
 			// Check inputs
-			if (AssetDatabase.IsValidFolder($"Assets/StorySDK/Stories/{id}"))
+			if (AssetDatabase.IsValidFolder(storyPaths.storyFolder))
 			{
-				throw new ArgumentException($"Folder 'Assets/StorySDK/Stories/{id}' already exists", nameof(id));
+				throw new ArgumentException($"Folder '{storyPaths.storyFolder}' already exists", nameof(id));
 			}
 			if (addressableSettings.FindGroup(id) is not null)
 			{
@@ -45,25 +48,24 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			}
 			locales = locales.Distinct().ToList();
 			
-			// create template structure
-			var storyFolderGuid = AssetDatabase.CreateFolder("Assets/StorySDK/Stories", id);
-			var localizationFolderGuid = AssetDatabase.CreateFolder($"Assets/StorySDK/Stories/{id}", "Localization");
-			var strings = LocalizationEditorSettings.CreateStringTableCollection("strings", $"Assets/StorySDK/Stories/{id}/Localization", locales);
-			var assets = LocalizationEditorSettings.CreateAssetTableCollection("assets", $"Assets/StorySDK/Stories/{id}/Localization", locales);
+			// Create template structure
+			Paths.EnsureFolderExists(storyPaths.storyFolder);
+			Paths.EnsureFolderExists(storyPaths.localizationFolder);
+			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
+			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
 
-			// create main manifest asset
+			// Create main manifest asset
 			var storyInfo = CreateInstance<StoryInfo>();
 			storyInfo.id = id;
 			NewLocalized(storyInfo.icon, assets, "info.icon");
 			NewLocalized(storyInfo.title, strings, "info.title");
 			NewLocalized(storyInfo.description, strings, "info.description");
-			AssetDatabase.CreateAsset(storyInfo, $"Assets/StorySDK/Stories/{id}/StoryInfo.asset");
+			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
 			
-			// manage addressables
-			var addressableGroup = addressableSettings.CreateGroup(id, false, true, false, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
-			var path = AssetDatabase.GetAssetPath(storyInfo);
-			var guid = AssetDatabase.AssetPathToGUID(path);
-			addressableSettings.CreateOrMoveEntry(guid, addressableGroup, true);
+			// Manage addressables
+			var addressableGroup = addressableSettings.FindGroup(id);
+			addressableGroup ??= addressableSettings.CreateGroup(id, false, true, false, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
+			addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
 		}
 
 		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)

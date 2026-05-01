@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
@@ -7,17 +8,27 @@ using Object = UnityEngine.Object;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
+	[Serializable]
 	public class PerStoryLocalizationResolver : GroupResolver
 	{
 		public override string GetExpectedGroupName(IList<LocaleIdentifier> locales, Object asset, AddressableAssetSettings aaSettings)
 		{
-			var path = AssetDatabase.GetAssetPath(asset);
-			return asset switch
+			if (asset is Locale)
 			{
-				Locale => "Locales",
-				_ when path.StartsWith("Assets/StorySDK/Stories/") => path.Split("/")[3],
-				_ => base.GetExpectedGroupName(locales, asset, aaSettings)
-			};
+				return "Locales";
+			}
+			
+			var path = AssetDatabase.GetAssetPath(asset);
+			const string storyPrefix = $"{Paths.StoriesFolder}/";
+			if (path.StartsWith(storyPrefix))
+			{
+				var start = storyPrefix.Length;
+				var end = path.IndexOf('/', start);
+				var storyId = end < 0 ? path[start..] : path[start..end];
+				return $"{storyId}-Localization";
+			}
+
+			return base.GetExpectedGroupName(locales, asset, aaSettings);
 		}
 
 	}

@@ -32,7 +32,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			foreach (var addressableGroup in addressableSettings.groups)
 			{
 				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
-				schema.IncludeInBuild = addressableGroup.Name.StartsWith($"{storyInfo.id}-");
+				schema.IncludeInBuild = addressableGroup.Name == storyInfo.id;
 			}
 			
 			Debug.Log($"Building story '{storyInfo.id}'...");

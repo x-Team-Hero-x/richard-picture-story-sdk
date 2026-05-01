@@ -52,7 +52,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			// Create template structure
 			Paths.EnsureFolderExists(storyPaths.storyFolder);
 			Paths.EnsureFolderExists(storyPaths.localizationFolder);
-			var addressableGroup = addressableSettings.CreateGroup(storyPaths.mainGroup, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
+			var addressableGroup = addressableSettings.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
 			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
 			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
 			

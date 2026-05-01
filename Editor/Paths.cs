@@ -10,15 +10,14 @@ public static class Paths
 	public const string StoriesFolder = "Assets/StorySDK/Stories";
 	public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
 
-	public static (string storyFolder, string localizationFolder, string storyInfoAsset, string mainGroup, string stringsTable, string assetsTable) GetStoryPaths(string id)
+	public static (string storyFolder, string localizationFolder, string storyInfoAsset, string stringsTable, string assetsTable) GetStoryPaths(string id)
 	{
 		var storyFolderPath = $"{StoriesFolder}/{id}";
 		var localizationFolderPath = $"{storyFolderPath}/Localization";
 		var storyInfoAssetPath = $"{storyFolderPath}/StoryInfo.asset";
-		var mainGroupName = $"{id}-Main";
 		var stringsTableName = $"{id}-strings";
 		var assetsTableName = $"{id}-assets";
-		return (storyFolderPath, localizationFolderPath, storyInfoAssetPath, mainGroupName, stringsTableName, assetsTableName);
+		return (storyFolderPath, localizationFolderPath, storyInfoAssetPath, stringsTableName, assetsTableName);
 	}
 
 	public static void EnsureFolderExists(string folderPath)

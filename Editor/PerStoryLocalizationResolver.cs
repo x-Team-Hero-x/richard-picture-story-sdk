@@ -25,7 +25,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				var start = storyPrefix.Length;
 				var end = path.IndexOf('/', start);
 				var storyId = end < 0 ? path[start..] : path[start..end];
-				return $"{storyId}-Localization";
+				return storyId;
 			}
 
 			return base.GetExpectedGroupName(locales, asset, aaSettings);

@@ -63,6 +63,11 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
 			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
 			storyInfoEntry.address = "StoryInfo";
+			
+			// Select newly created object
+			EditorUtility.FocusProjectWindow();
+			Selection.activeObject = storyInfo;
+			EditorGUIUtility.PingObject(storyInfo);
 		}
 
 		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)

@@ -9,6 +9,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		public const string SdkFolder = "Assets/StorySDK";
 		public const string StoriesFolder = "Assets/StorySDK/Stories";
 		public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
+		public const string PackagedStoriesFolder = "Library/com.unity.addressables/aa/Windows";
 
 		public static (string storyFolder, string localizationFolder, string storyInfoAsset, string stringsTable, string assetsTable) GetStoryPaths(string id)
 		{

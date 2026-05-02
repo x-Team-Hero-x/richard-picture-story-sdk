@@ -41,7 +41,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			{
 				Debug.LogError($"Story build for '{storyInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
 			}
-			Debug.Log($"Story '{storyInfo.id}' was built successfully in {buildResult.Duration}");
+			Debug.Log($"Story '{storyInfo.id}' was built successfully");
 		}
 	}
 }

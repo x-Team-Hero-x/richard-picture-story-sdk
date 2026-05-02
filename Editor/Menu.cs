@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
@@ -17,6 +18,20 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		private static void CreateStoryTemplate()
 		{
 			ScriptableWizard.DisplayWizard<StoryCreator>("Create story");
+		}
+	
+		[MenuItem($"{Prefix}/Check story", priority = Priority + 2)]
+		private static async void CheckStory()
+		{
+			var path = EditorUtility.OpenFilePanel("Select story bundle", Paths.PackagedStoriesFolder, "json,bin");
+			if (string.IsNullOrEmpty(path))
+			{
+				return;
+			}
+			
+			Debug.Log($"Checking story at '{path}'...");
+			var storyInfo = await StoryInfo.FromFile(path);
+			Debug.Log($"Story checked, got id '{storyInfo.id}'");
 		}
 	}
 }

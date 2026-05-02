@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Localization;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
@@ -63,7 +61,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			NewLocalized(storyInfo.title, strings, "info.title");
 			NewLocalized(storyInfo.description, strings, "info.description");
 			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
-			addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
+			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
+			storyInfoEntry.address = "StoryInfo";
 		}
 
 		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)

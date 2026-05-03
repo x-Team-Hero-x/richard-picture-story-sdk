@@ -37,9 +37,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			var storyPaths = Paths.GetStoryPaths(id);
 			
 			// Check inputs
-			if (AssetDatabase.IsValidFolder(storyPaths.storyFolder))
+			if (AssetDatabase.IsValidFolder(storyPaths.StoryFolder))
 			{
-				throw new ArgumentException($"Folder '{storyPaths.storyFolder}' already exists", nameof(id));
+				throw new ArgumentException($"Folder '{storyPaths.StoryFolder}' already exists", nameof(id));
 			}
 			if (addressableSettings.FindGroup(id) is not null)
 			{
@@ -48,11 +48,13 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			locales = locales.Distinct().ToList();
 			
 			// Create template structure
-			Paths.EnsureFolderExists(storyPaths.storyFolder);
-			Paths.EnsureFolderExists(storyPaths.localizationFolder);
+			foreach (var storySubfolder in storyPaths.AllFolders)
+			{
+				Paths.EnsureFolderExists(storySubfolder);
+			}
 			var addressableGroup = addressableSettings.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
-			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
-			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
+			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.StringsTable, storyPaths.LocalizationFolder, locales);
+			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.AssetsTable, storyPaths.LocalizationFolder, locales);
 			
 			// Create main manifest asset
 			var storyInfo = CreateInstance<StoryInfo>();
@@ -60,7 +62,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			NewLocalized(storyInfo.icon, assets, "info.icon");
 			NewLocalized(storyInfo.title, strings, "info.title");
 			NewLocalized(storyInfo.description, strings, "info.description");
-			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
+			AssetDatabase.CreateAsset(storyInfo, storyPaths.StoryInfoAsset);
 			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
 			storyInfoEntry.address = "StoryInfo";
 			

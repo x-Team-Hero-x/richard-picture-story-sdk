@@ -11,8 +11,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
 	public class StoryCreator : ScriptableWizard
 	{
-		public required string id = "com.example.story";
-		public required List<Locale> locales = new();
+		public string id = "com.example.story";
+		public List<Locale> locales = new();
 
 		private void OnEnable()
 		{
@@ -34,18 +34,23 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		{
 			// Calculate inferred properties
 			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
-			var storyPaths = Paths.GetStoryPaths(id);
+			var storyPaths = new StoryPaths(id);
 			
 			// Check inputs
-			if (AssetDatabase.IsValidFolder(storyPaths.StoryFolder))
+			if (string.IsNullOrWhiteSpace(id))
 			{
-				throw new ArgumentException($"Folder '{storyPaths.StoryFolder}' already exists", nameof(id));
+				throw new ArgumentException("Field 'id' can not be empty", nameof(id));
+			}
+			if (AssetDatabase.IsValidFolder(storyPaths.storyFolder))
+			{
+				throw new ArgumentException($"Folder '{storyPaths.storyFolder}' already exists", nameof(id));
 			}
 			if (addressableSettings.FindGroup(id) is not null)
 			{
 				throw new ArgumentException($"Addressable group '{id}' already exists", nameof(id));
 			}
 			locales = locales.Distinct().ToList();
+			id = id.Trim();
 			
 			// Create template structure
 			foreach (var storySubfolder in storyPaths.AllFolders)
@@ -53,8 +58,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				Paths.EnsureFolderExists(storySubfolder);
 			}
 			var addressableGroup = addressableSettings.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
-			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.StringsTable, storyPaths.LocalizationFolder, locales);
-			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.AssetsTable, storyPaths.LocalizationFolder, locales);
+			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
+			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
 			
 			// Create main manifest asset
 			var storyInfo = CreateInstance<StoryInfo>();
@@ -62,14 +67,22 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			NewLocalized(storyInfo.icon, assets, "info.icon");
 			NewLocalized(storyInfo.title, strings, "info.title");
 			NewLocalized(storyInfo.description, strings, "info.description");
-			AssetDatabase.CreateAsset(storyInfo, storyPaths.StoryInfoAsset);
+			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
 			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
 			storyInfoEntry.address = "StoryInfo";
 			
+			// Create editor asset
+			var editorStoryInfo = CreateInstance<EditorStoryInfo>();
+			editorStoryInfo.storyInfo = storyInfo;
+			editorStoryInfo.stringTable = strings;
+			editorStoryInfo.assetTable = assets;
+			editorStoryInfo.storyPaths = storyPaths;
+			AssetDatabase.CreateAsset(editorStoryInfo, storyPaths.editorStoryInfoAsset);
+			
 			// Select newly created object
 			EditorUtility.FocusProjectWindow();
-			Selection.activeObject = storyInfo;
-			EditorGUIUtility.PingObject(storyInfo);
+			Selection.activeObject = editorStoryInfo;
+			EditorGUIUtility.PingObject(editorStoryInfo);
 		}
 
 		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)

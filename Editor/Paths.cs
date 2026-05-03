@@ -12,35 +12,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
 		public const string PackagedStoriesFolder = "Library/com.unity.addressables/aa/Windows";
 
-		public record StoryPaths(
-			string StoryFolder,
-			string StoryInfoAsset,
-			string LocalizationFolder,
-			string CharactersFolder,
-			string AssetsFolder,
-			string DialogFilesFolder,
-			string StringsTable,
-			string AssetsTable
-		)
-		{
-			public readonly IReadOnlyList<string> AllFolders = new[] {StoryFolder, LocalizationFolder, CharactersFolder, AssetsFolder, DialogFilesFolder};
-		}
-		
-		public static StoryPaths GetStoryPaths(string id)
-		{
-			var storyFolderPath = $"{StoriesFolder}/{id}";
-			return new StoryPaths(
-				StoryFolder: storyFolderPath,
-				StoryInfoAsset: $"{storyFolderPath}/StoryInfo.asset",
-				LocalizationFolder: $"{storyFolderPath}/Localization",
-				CharactersFolder: $"{storyFolderPath}/Characters",
-				AssetsFolder: $"{storyFolderPath}/Assets",
-				DialogFilesFolder: $"{storyFolderPath}/Dialogs",
-				StringsTable: $"{id}.strings",
-				AssetsTable: $"{id}.assets"
-			);
-		}
-
 		public static void EnsureFolderExists(string folderPath)
 		{
 			if (folderPath == "Assets")

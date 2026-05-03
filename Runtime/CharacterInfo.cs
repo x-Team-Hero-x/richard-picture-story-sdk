@@ -6,7 +6,8 @@ namespace HeroTeam.RichardPicture.StorySdk
 	[CreateAssetMenu(fileName = "CharacterInfo", menuName = "Scriptable Objects/Character info")]
 	public class CharacterInfo : ScriptableObject
 	{
-		public required GameObject spritePrefab;
-    	public required LocalizedString displayName;
+		[HideInInspector] public required string id;
+		public LocalizedAsset<GameObject> spritePrefab = new();
+    	public LocalizedString displayName = new();
 	}
 }

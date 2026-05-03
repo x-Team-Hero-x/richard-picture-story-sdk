@@ -6,42 +6,56 @@ using UnityEngine;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
-	[CustomEditor(typeof(StoryInfo))]
+	[CustomEditor(typeof(EditorStoryInfo))]
 	[CanEditMultipleObjects]
 	public class StoryInfoEditor : UnityEditor.Editor
 	{
 		[SerializeField] private bool isControlsFoldoutOpen = true;
+		public EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
+		public StoryInfo StoryInfo => EditorStoryInfo.storyInfo;
 		
 		public override void OnInspectorGUI()
 		{
-			var storyInfo = (StoryInfo)target;
 			isControlsFoldoutOpen = EditorGUILayout.Foldout(isControlsFoldoutOpen, "Controls");
 			if (isControlsFoldoutOpen)
 			{
-				if (GUILayout.Button("Package and Export"))
-				{
-					EditorApplication.delayCall += () => BuildStory(storyInfo);
-				}
+				Button("Package and Export", BuildStory);
+				Button("Add character", AddCharacter);
 			}
+			EditorGUILayout.Space();
 			base.OnInspectorGUI();
 		}
 
-		private static void BuildStory(StoryInfo storyInfo)
+		private void Button(string buttonText, EditorApplication.CallbackFunction action)
+		{
+			if (GUILayout.Button(buttonText))
+			{
+				EditorApplication.delayCall += action;
+			}
+		}
+
+		private void BuildStory()
 		{
 			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
 			foreach (var addressableGroup in addressableSettings.groups)
 			{
 				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
-				schema.IncludeInBuild = addressableGroup.Name == storyInfo.id;
+				schema.IncludeInBuild = addressableGroup.Name == StoryInfo.id;
 			}
 			
-			Debug.Log($"Building story '{storyInfo.id}'...");
+			Debug.Log($"Building story '{StoryInfo.id}'...");
 			AddressableAssetSettings.BuildPlayerContent(out var buildResult);
 			if (!string.IsNullOrEmpty(buildResult.Error))
 			{
-				Debug.LogError($"Story build for '{storyInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
+				Debug.LogError($"Story build for '{StoryInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
 			}
-			Debug.Log($"Story '{storyInfo.id}' was built successfully");
+			Debug.Log($"Story '{StoryInfo.id}' was built successfully");
+		}
+
+		public void AddCharacter()
+		{
+			var characterCreator = ScriptableWizard.DisplayWizard<CharacterCreator>($"Add a character to {StoryInfo.id}");
+			characterCreator.editorStoryInfo = EditorStoryInfo;
 		}
 	}
 }

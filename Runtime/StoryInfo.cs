@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace HeroTeam.RichardPicture.StorySdk
         public LocalizedAsset<Sprite> icon = new();
         public LocalizedString title = new();
         public LocalizedString description = new();
+        [HideInInspector] public List<CharacterInfo> characters = new();
 
         public static async Task<StoryInfo> FromFile(string path)
         {

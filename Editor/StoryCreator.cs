@@ -24,9 +24,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			locales = locales.Where(locale => locale is not null).ToList();
 			if (locales.Count == 0)
 			{
-				var englishLocaleGuid = new GUID("a2cc46532a516b6418d698f9a6c5e3f4");
-				var englishLocale = AssetDatabase.LoadAssetByGUID<Locale>(englishLocaleGuid);
-				locales.Add(englishLocale);
+				locales.Add(ProjectInitialization.DefaultLocale);
 			}
 		}
 

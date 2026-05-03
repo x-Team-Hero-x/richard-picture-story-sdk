@@ -4,22 +4,38 @@ using UnityEditor.Localization;
 using UnityEditor.Localization.Addressables;
 using UnityEngine;
 using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
 	internal static class ProjectInitialization
 	{
+		internal static readonly Locale DefaultLocale = AssetDatabase.LoadAssetByGUID<Locale>(new GUID("a2cc46532a516b6418d698f9a6c5e3f4"));
+		
 		internal static void Initialize()
 		{
-			CreateAddressableSettings();
 			CreateAssetFolders();
-			CreateGroupNameResolver();
+			CreateAddressableSettings();
+			CreateLocalizationSettings();
 			RegisterLocales();
+			CreateGroupNameResolver();
 		}
 		
 		private static void CreateAddressableSettings()
 		{
 			_ = AddressableAssetSettingsDefaultObject.GetSettings(true);
+		}
+		
+		private static void CreateLocalizationSettings()
+		{
+			if (LocalizationEditorSettings.ActiveLocalizationSettings is not null)
+			{
+				return;
+			}
+			var settings = ScriptableObject.CreateInstance<LocalizationSettings>();
+			settings.SetSelectedLocale(DefaultLocale);
+			AssetDatabase.CreateAsset(settings, Paths.LocalizationSettingsAsset);
+			LocalizationEditorSettings.ActiveLocalizationSettings = settings;
 		}
 		
 		private static void RegisterLocales()

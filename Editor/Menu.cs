@@ -28,10 +28,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			{
 				return;
 			}
-			
+
 			Debug.Log($"Checking story at '{path}'...");
-			var storyInfo = await StoryInfo.FromFile(path);
-			Debug.Log($"Story checked, got id '{storyInfo.id}'");
+			using var storyInfo = await StoryInfo.FromFile(path);
+			Debug.Log($"Story checked, got id '{storyInfo.id}' and {storyInfo.characters.Count} characters.");
 		}
 	}
 }

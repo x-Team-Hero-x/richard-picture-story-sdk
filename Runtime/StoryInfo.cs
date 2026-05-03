@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using UnityEngine.Localization;
 namespace HeroTeam.RichardPicture.StorySdk
 {
     [CreateAssetMenu(fileName = "StoryInfo", menuName = "Scriptable Objects/Story info")]
-    public class StoryInfo : ScriptableObject
+    public class StoryInfo : ScriptableObject, IDisposable
     {
         [HideInInspector] public required string id;
         public LocalizedAsset<Sprite> icon = new();
@@ -23,7 +24,16 @@ namespace HeroTeam.RichardPicture.StorySdk
             var location = storyInfoLocations.Single();
             var storyInfo = await Addressables.LoadAssetAsync<StoryInfo>(location).Task;
             Addressables.RemoveResourceLocator(catalogLocator);
+            if (storyInfo is null)
+            {
+                throw new NullReferenceException($"Could not load story from '{path}'");
+            }
             return storyInfo;
+        }
+
+        public void Dispose()
+        {
+            Addressables.Release(this);
         }
     }
 }

@@ -1,4 +1,5 @@
 using HeroTeam.RichardPicture.StorySdk.Editor;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Localization;
 using UnityEngine;
 
@@ -11,5 +12,6 @@ namespace HeroTeam.RichardPicture.StorySdk
         [HideInInspector] public required StringTableCollection stringTable;
         [HideInInspector] public required AssetTableCollection assetTable;
         [HideInInspector] public required StoryPaths storyPaths;
+        [HideInInspector] public required AddressableAssetGroup addressableGroup;
     }
 }

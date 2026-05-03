@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -13,6 +14,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 
 		private void OnWizardCreate()
 		{
+			// Calculate inferred properties
+			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
 			var characterAssetPath = $"{editorStoryInfo.storyPaths.charactersFolder}/{id}.asset";
 			
 			// Check inputs
@@ -34,7 +37,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			NewLocalized(characterInfo.displayName, editorStoryInfo.stringTable, $"characters.{id}.name");
 			editorStoryInfo.storyInfo.characters.Add(characterInfo);
 			AssetDatabase.CreateAsset(characterInfo, characterAssetPath);
-			//TODO: mark addressable??
+			addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(characterInfo), editorStoryInfo.addressableGroup, true);
 			
 			// Select newly created object
 			EditorUtility.FocusProjectWindow();

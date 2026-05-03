@@ -32,6 +32,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			Debug.Log($"Checking story at '{path}'...");
 			using var storyInfo = await StoryInfo.FromFile(path);
 			Debug.Log($"Story checked, got id '{storyInfo.id}' and {storyInfo.characters.Count} characters.");
+			var character0 = storyInfo.characters[0];
+			var id0 = character0.id;
+			var name0 = await character0.displayName.GetLocalizedStringAsync().Task;
+			Debug.Log($"0th character id={id0} and name={name0}");
 		}
 	}
 }

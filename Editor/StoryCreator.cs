@@ -77,6 +77,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			editorStoryInfo.stringTable = strings;
 			editorStoryInfo.assetTable = assets;
 			editorStoryInfo.storyPaths = storyPaths;
+			editorStoryInfo.addressableGroup = addressableGroup;
 			AssetDatabase.CreateAsset(editorStoryInfo, storyPaths.editorStoryInfoAsset);
 			
 			// Select newly created object

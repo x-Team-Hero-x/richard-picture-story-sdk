@@ -11,7 +11,17 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		[MenuItem($"{Prefix}/Initialize project", priority = Priority + 0)]
 		private static void InitializeProject()
 		{
-			ProjectInitialization.Initialize();
+			var doInitialize =
+				EditorUtility.DisplayDialog(
+					"Are you sure?",
+					"Initializing a project for work with StorySDK can break stuff. " +
+					"It is recommended to use it only on empty projects. " +
+					"Do you want to continue? ",
+					"Initialize StorySDK", "Cancel");
+			if (doInitialize)
+			{
+				ProjectInitialization.Initialize();	
+			}
 		}
 	
 		[MenuItem($"{Prefix}/Create story", priority = Priority + 1)]

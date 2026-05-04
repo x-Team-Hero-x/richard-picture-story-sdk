@@ -1,6 +1,4 @@
 using UnityEditor;
-using UnityEngine;
-using UnityEngine.Localization.Settings;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
@@ -30,30 +28,11 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 		{
 			ScriptableWizard.DisplayWizard<StoryCreator>("Create story");
 		}
-	
-		[MenuItem($"{Prefix}/Check story", priority = Priority + 2)]
-		private static async void CheckStory()
-		{
-			if (!EditorApplication.isPlayingOrWillChangePlaymode)
-			{
-				Debug.LogWarning("Stories can be loaded only on Play Mode.");
-				return;
-			}
-			
-			var path = EditorUtility.OpenFilePanel("Select story bundle", Paths.PackagedStoriesFolder, "json,bin");
-			if (string.IsNullOrEmpty(path))
-			{
-				return;
-			}
 
-			Debug.Log($"Checking story at '{path}'...");
-			await LocalizationSettings.InitializationOperation.Task;
-			using var storyInfo = await StoryInfo.FromStoryFile(path);
-			Debug.Log($"Story checked, got id '{storyInfo.id}' and {storyInfo.characters.Count} character(s).");
-			var character0 = storyInfo.characters[0];
-			var id0 = character0.id;
-			var name0 = await character0.displayName.GetLocalizedStringAsync().Task;
-			Debug.Log($"0th character id={id0} and name={name0}");
+		[MenuItem($"{Prefix}/Check story", priority = Priority + 2)]
+		private static void CheckStory()
+		{
+			_ = StoryChecker.CheckStory();
 		}
 	}
 }

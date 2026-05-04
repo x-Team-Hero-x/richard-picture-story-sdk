@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk
@@ -16,24 +17,32 @@ namespace HeroTeam.RichardPicture.StorySdk
         public LocalizedString title = new();
         public LocalizedString description = new();
         [HideInInspector] public List<CharacterInfo> characters = new();
+        
+        private IResourceLocator? _catalogLocator;
 
-        public static async Task<StoryInfo> FromFile(string path)
+        public static async Task<StoryInfo> FromStoryFile(string path)
         {
             var catalogLocator = await Addressables.LoadContentCatalogAsync(path, true).Task;
             catalogLocator.Locate("StoryInfo", typeof(StoryInfo), out var storyInfoLocations);
             var location = storyInfoLocations.Single();
             var storyInfo = await Addressables.LoadAssetAsync<StoryInfo>(location).Task;
-            Addressables.RemoveResourceLocator(catalogLocator);
             if (storyInfo is null)
             {
                 throw new NullReferenceException($"Could not load story from '{path}'");
             }
+            storyInfo._catalogLocator = catalogLocator;
             return storyInfo;
         }
 
         public void Dispose()
         {
+            if (_catalogLocator is null)
+            {
+                return;
+            }
             Addressables.Release(this);
+            Addressables.RemoveResourceLocator(_catalogLocator);
+            _catalogLocator = null;
         }
     }
 }

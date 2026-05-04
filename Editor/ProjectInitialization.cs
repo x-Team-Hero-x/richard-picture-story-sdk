@@ -21,6 +21,12 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			CreateGroupNameResolver();
 		}
 		
+		private static void CreateAssetFolders()
+		{
+			Paths.EnsureFolderExists(Paths.SdkFolder);
+			Paths.EnsureFolderExists(Paths.StoriesFolder);
+		}
+		
 		private static void CreateAddressableSettings()
 		{
 			_ = AddressableAssetSettingsDefaultObject.GetSettings(true);
@@ -48,12 +54,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				LocalizationEditorSettings.AddLocale(locale);
 			}
 			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-		}
-		
-		private static void CreateAssetFolders()
-		{
-			Paths.EnsureFolderExists(Paths.SdkFolder);
-			Paths.EnsureFolderExists(Paths.StoriesFolder);
 		}
 		
 		private static void CreateGroupNameResolver()

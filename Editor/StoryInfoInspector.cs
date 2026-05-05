@@ -8,25 +8,20 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
 	[CustomEditor(typeof(EditorStoryInfo))]
 	[CanEditMultipleObjects]
-	public class StoryInfoEditor : UnityEditor.Editor
+	public class StoryInfoInspector : UnityEditor.Editor
 	{
-		[SerializeField] private bool isControlsFoldoutOpen = true;
 		public EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
 		public StoryInfo StoryInfo => EditorStoryInfo.storyInfo;
 		
 		public override void OnInspectorGUI()
 		{
-			isControlsFoldoutOpen = EditorGUILayout.Foldout(isControlsFoldoutOpen, "Controls");
-			if (isControlsFoldoutOpen)
-			{
-				Button("Package and Export", BuildStory);
-				Button("Add character", AddCharacter);
-			}
+			Button("Package and Export", BuildStory);
+			Button("Add character", AddCharacter);
 			EditorGUILayout.Space();
 			base.OnInspectorGUI();
 		}
 
-		private void Button(string buttonText, EditorApplication.CallbackFunction action)
+		private static void Button(string buttonText, EditorApplication.CallbackFunction action)
 		{
 			if (GUILayout.Button(buttonText))
 			{
@@ -52,7 +47,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			Debug.Log($"Story '{StoryInfo.id}' was built successfully");
 		}
 
-		public void AddCharacter()
+		private void AddCharacter()
 		{
 			var characterCreator = ScriptableWizard.DisplayWizard<CharacterCreator>($"Add a character to {StoryInfo.id}");
 			characterCreator.editorStoryInfo = EditorStoryInfo;

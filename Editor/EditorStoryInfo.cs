@@ -8,10 +8,10 @@ namespace HeroTeam.RichardPicture.StorySdk
 {
     public class EditorStoryInfo : ScriptableObject
     {
+        [HideInInspector] public required StoryPaths storyPaths;
         [HideInInspector] public required StoryInfo storyInfo;
         [HideInInspector] public required StringTableCollection stringTable;
         [HideInInspector] public required AssetTableCollection assetTable;
-        [HideInInspector] public required StoryPaths storyPaths;
         [HideInInspector] public required AddressableAssetGroup addressableGroup;
     }
 }

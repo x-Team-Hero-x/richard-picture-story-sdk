@@ -4,10 +4,9 @@ using UnityEngine.Localization;
 namespace HeroTeam.RichardPicture.StorySdk
 {
 	[CreateAssetMenu(fileName = "CharacterInfo", menuName = "Scriptable Objects/Character info")]
-	public class CharacterInfo : ScriptableObject
+	public class CharacterInfo : StoryAssetBase
 	{
-		[HideInInspector] public required string id;
 		public LocalizedAsset<GameObject> spritePrefab = new();
-    	public LocalizedString displayName = new();
+		public LocalizedString displayName = new();
 	}
 }

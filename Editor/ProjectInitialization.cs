@@ -11,8 +11,25 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 	internal static class ProjectInitialization
 	{
 		internal static readonly Locale DefaultLocale = AssetDatabase.LoadAssetByGUID<Locale>(new GUID("a2cc46532a516b6418d698f9a6c5e3f4"));
+		private static readonly string DialogOptOutKey = typeof(Menu).FullName!;
 		
-		internal static void Initialize()
+		internal static void AskAndInitialize()
+		{
+			var doInitialize =
+				EditorUtility.DisplayDialog(
+					"Are you sure?",
+					"Initializing a project for work with StorySDK can break stuff. " +
+					"It is recommended to use it only on empty projects. " +
+					"Do you want to continue? ",
+					"Initialize StorySDK", "Cancel",
+					DialogOptOutDecisionType.ForThisSession, DialogOptOutKey);
+			if (doInitialize)
+			{
+				ProjectInitialization.Initialize();	
+			}
+		}
+		
+		private static void Initialize()
 		{
 			CreateAssetFolders();
 			CreateAddressableSettings();

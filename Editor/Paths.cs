@@ -1,6 +1,5 @@
 using System;
 using UnityEditor;
-using Object = UnityEngine.Object;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
@@ -34,20 +33,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			var folderName = folderPath[(lastSlashIndex+1)..];
 			EnsureFolderExists(parentPath);
 			AssetDatabase.CreateFolder(parentPath, folderName);
-		}
-
-		public static GUID GetAssetGuid(Object asset)
-		{
-			var path = AssetDatabase.GetAssetPath(asset);
-			var guid = AssetDatabase.GUIDFromAssetPath(path);
-			return guid;
-		}
-
-		public static string GetAssetGuidString(Object asset)
-		{
-			var path = AssetDatabase.GetAssetPath(asset);
-			var guid = AssetDatabase.AssetPathToGUID(path);
-			return guid;
 		}
 	}
 }

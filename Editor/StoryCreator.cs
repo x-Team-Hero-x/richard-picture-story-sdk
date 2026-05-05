@@ -3,24 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Localization;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
-	public class StoryCreator : ScriptableWizard
+	public class StoryCreator : StoryAssetCreatorBase<StoryInfo>
 	{
-		public string id = "com.example.story";
 		public List<Locale> locales = new();
+		
+		protected override string IdExample => "com.example.story";
+		protected override string AssetPath => editorStoryInfo.storyPaths.storyInfoAsset;
+		protected override string AddressableName => "StoryInfo";
+		
+		private static AddressableAssetSettings EditorAddressables => AddressableAssetSettingsDefaultObject.Settings;
 
-		private void OnEnable()
+		protected override void OnValidate()
 		{
-			OnValidate();
-		}
-
-		private void OnValidate()
-		{
+			base.OnValidate();
 			locales = locales.Where(locale => locale is not null).ToList();
 			if (locales.Count == 0)
 			{
@@ -28,66 +30,47 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			}
 		}
 
-		private void OnWizardCreate()
+		protected override void CheckInputs()
 		{
-			// Calculate inferred properties
-			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
-			var storyPaths = new StoryPaths(id);
-			
-			// Check inputs
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Field 'id' can not be empty", nameof(id));
-			}
-			if (AssetDatabase.IsValidFolder(storyPaths.storyFolder))
-			{
-				throw new ArgumentException($"Folder '{storyPaths.storyFolder}' already exists", nameof(id));
-			}
-			if (addressableSettings.FindGroup(id) is not null)
+			base.CheckInputs();
+			if (EditorAddressables.FindGroup(id) is not null)
 			{
 				throw new ArgumentException($"Addressable group '{id}' already exists", nameof(id));
 			}
 			locales = locales.Distinct().ToList();
-			id = id.Trim();
+		}
+
+		protected override void OnWizardCreate()
+		{
+			// Create editor asset
+			editorStoryInfo = CreateInstance<EditorStoryInfo>();
+			editorStoryInfo.storyPaths = new StoryPaths(id);
+
+			base.OnWizardCreate();
 			
-			// Create template structure
-			foreach (var storySubfolder in storyPaths.AllFolders)
+			// Save editor asset
+			editorStoryInfo.storyInfo = CreatedAsset;
+			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.storyPaths.editorStoryInfoAsset);
+		}
+
+		protected override void BeforeSave()
+		{
+			// Create folder structure
+			foreach (var storySubfolder in editorStoryInfo.storyPaths.AllFolders)
 			{
 				Paths.EnsureFolderExists(storySubfolder);
 			}
-			var addressableGroup = addressableSettings.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
-			var strings = LocalizationEditorSettings.CreateStringTableCollection(storyPaths.stringsTable, storyPaths.localizationFolder, locales);
-			var assets = LocalizationEditorSettings.CreateAssetTableCollection(storyPaths.assetsTable, storyPaths.localizationFolder, locales);
 			
-			// Create main manifest asset
-			var storyInfo = CreateInstance<StoryInfo>();
-			storyInfo.id = id;
-			NewLocalized(storyInfo.icon, assets, "info.icon");
-			NewLocalized(storyInfo.title, strings, "info.title");
-			NewLocalized(storyInfo.description, strings, "info.description");
-			AssetDatabase.CreateAsset(storyInfo, storyPaths.storyInfoAsset);
-			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(Paths.GetAssetGuidString(storyInfo), addressableGroup, true);
-			storyInfoEntry.address = "StoryInfo";
+			// Create addressable stuff
+			editorStoryInfo.addressableGroup = EditorAddressables.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
+			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection(editorStoryInfo.storyPaths.stringsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
+			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection(editorStoryInfo.storyPaths.assetsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
 			
-			// Create editor asset
-			var editorStoryInfo = CreateInstance<EditorStoryInfo>();
-			editorStoryInfo.storyInfo = storyInfo;
-			editorStoryInfo.stringTable = strings;
-			editorStoryInfo.assetTable = assets;
-			editorStoryInfo.storyPaths = storyPaths;
-			editorStoryInfo.addressableGroup = addressableGroup;
-			AssetDatabase.CreateAsset(editorStoryInfo, storyPaths.editorStoryInfoAsset);
-			
-			// Select newly created object
-			EditorUtility.FocusProjectWindow();
-			Selection.activeObject = editorStoryInfo;
-			EditorGUIUtility.PingObject(editorStoryInfo);
-		}
-
-		private static void NewLocalized(LocalizedReference reference, LocalizationTableCollection table, string key)
-		{
-			var entry = table.SharedData.AddKey(key);
-			reference.SetReference(table.TableCollectionNameReference, entry.Key);
+			// Fill properties
+			base.BeforeSave();
+			SetupLocalizedProperty(CreatedAsset.icon, "info.icon");
+			SetupLocalizedProperty(CreatedAsset.title, "info.title");
+			SetupLocalizedProperty(CreatedAsset.description, "info.description");
 		}
 	}
 }

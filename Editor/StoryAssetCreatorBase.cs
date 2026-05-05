@@ -71,9 +71,12 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			storyInfoEntry.address = AddressableName;
 
 			// Select newly created object
-			EditorUtility.FocusProjectWindow();
-			Selection.activeObject = CreatedAsset;
-			EditorGUIUtility.PingObject(CreatedAsset);
+			EditorApplication.delayCall += () =>
+			{
+				EditorUtility.FocusProjectWindow();
+				Selection.activeObject = CreatedAsset;
+				EditorGUIUtility.PingObject(CreatedAsset);
+			};
 		}
 
 		protected virtual void BeforeSave()

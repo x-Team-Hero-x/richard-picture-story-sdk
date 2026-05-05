@@ -8,10 +8,10 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.Localization;
 
-namespace HeroTeam.RichardPicture.StorySdk
+namespace HeroTeam.RichardPicture.StorySdk.InformationAssets
 {
     [CreateAssetMenu(fileName = "StoryInfo", menuName = "Scriptable Objects/Story info")]
-    public class StoryInfo : StoryAssetBase, IDisposable
+    public class StoryInfo : InformationAsset, IDisposable
     {
         public LocalizedAsset<Sprite> icon = new();
         public LocalizedString title = new();

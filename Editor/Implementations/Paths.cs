@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	public static class Paths
 	{

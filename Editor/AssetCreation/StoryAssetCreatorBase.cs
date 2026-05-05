@@ -1,25 +1,26 @@
 using System;
+using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
 using UnityEngine;
 using UnityEngine.Localization;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
-	public abstract class StoryAssetCreatorBase<T> : StoryAssetCreatorBase where T : StoryAssetBase
+	public abstract class StoryAssetCreatorBase<T> : StoryAssetCreatorBase where T : InformationAsset
 	{
 		protected new T CreatedAsset => (T)base.CreatedAsset;
-		protected sealed override StoryAssetBase CreateEmptyInstance() => CreateInstance<T>();
+		protected sealed override InformationAsset CreateEmptyInstance() => CreateInstance<T>();
 	}
 	
 	public abstract class StoryAssetCreatorBase : ScriptableWizard
 	{
 		[HideInInspector] public required EditorStoryInfo editorStoryInfo;
-		protected StoryAssetBase CreatedAsset = null!;
+		protected InformationAsset CreatedAsset = null!;
 		public string id = null!;
 		
-		protected abstract StoryAssetBase CreateEmptyInstance();
+		protected abstract InformationAsset CreateEmptyInstance();
 		protected abstract string IdExample { get; }
 		protected abstract string AssetPath { get; }
 		protected abstract string AddressableName { get; }

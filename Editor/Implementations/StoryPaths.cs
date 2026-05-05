@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	[Serializable]
 	public class StoryPaths

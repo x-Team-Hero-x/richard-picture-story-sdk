@@ -1,10 +1,12 @@
 using System;
 using System.Threading.Tasks;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
+using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
 	internal class StoryChecker
 	{

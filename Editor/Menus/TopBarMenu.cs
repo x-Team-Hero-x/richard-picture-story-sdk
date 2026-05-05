@@ -1,8 +1,10 @@
+using HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using UnityEditor;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
 {
-	internal static class Menu
+	internal static class TopBarMenu
 	{
 		private const string Prefix = "👀 Richard Picture/";
 		private const int Priority = 0;

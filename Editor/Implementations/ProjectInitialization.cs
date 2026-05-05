@@ -1,3 +1,4 @@
+using HeroTeam.RichardPicture.StorySdk.Editor.Menus;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
@@ -6,12 +7,12 @@ using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	internal static class ProjectInitialization
 	{
 		internal static readonly Locale DefaultLocale = AssetDatabase.LoadAssetByGUID<Locale>(new GUID("a2cc46532a516b6418d698f9a6c5e3f4"));
-		private static readonly string DialogOptOutKey = typeof(Menu).FullName!;
+		private static readonly string DialogOptOutKey = typeof(TopBarMenu).FullName!;
 		
 		internal static void AskAndInitialize()
 		{
@@ -25,7 +26,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 					DialogOptOutDecisionType.ForThisSession, DialogOptOutKey);
 			if (doInitialize)
 			{
-				ProjectInitialization.Initialize();	
+				Initialize();	
 			}
 		}
 		

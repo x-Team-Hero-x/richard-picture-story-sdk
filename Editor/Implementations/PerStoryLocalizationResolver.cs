@@ -6,7 +6,7 @@ using UnityEditor.Localization.Addressables;
 using UnityEngine.Localization;
 using Object = UnityEngine.Object;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	[Serializable]
 	public class PerStoryLocalizationResolver : GroupResolver

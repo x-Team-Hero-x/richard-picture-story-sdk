@@ -1,4 +1,6 @@
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+using HeroTeam.RichardPicture.StorySdk.InformationAssets;
+
+namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
 	public class CharacterCreator : StoryAssetCreatorBase<CharacterInfo>
 	{

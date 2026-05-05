@@ -1,21 +1,24 @@
+using HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
+using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
 {
 	[CustomEditor(typeof(EditorStoryInfo))]
 	[CanEditMultipleObjects]
 	public class StoryInfoInspector : UnityEditor.Editor
 	{
 		private EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
-		private StoryInfo StoryInfo => EditorStoryInfo.storyInfo;
+		private string StoryId => EditorStoryInfo.storyInfo.id;
 		
 		public override void OnInspectorGUI()
 		{
-			Button("Package and Export", BuildStory);
+			Button("Package and Export", () => StoryPackager.Package(StoryId));
 			CreatorButton<CharacterCreator>("character");
 			// CreatorButton<DialogCreator>("dialog");
 			EditorGUILayout.Space();
@@ -36,28 +39,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				$"Add a {assetKind}",
 				() =>
 				{
-					var creator = ScriptableWizard.DisplayWizard<TCreator>($"Add a {assetKind} to '{StoryInfo.id}'");
+					var creator = ScriptableWizard.DisplayWizard<TCreator>($"Add a {assetKind} to '{StoryId}'");
 					creator.editorStoryInfo = EditorStoryInfo;
 				}
 			);
-		}
-
-		private void BuildStory()
-		{
-			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
-			foreach (var addressableGroup in addressableSettings.groups)
-			{
-				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
-				schema.IncludeInBuild = addressableGroup.Name == StoryInfo.id;
-			}
-			
-			Debug.Log($"Building story '{StoryInfo.id}'...");
-			AddressableAssetSettings.BuildPlayerContent(out var buildResult);
-			if (!string.IsNullOrEmpty(buildResult.Error))
-			{
-				Debug.LogError($"Story build for '{StoryInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
-			}
-			Debug.Log($"Story '{StoryInfo.id}' was built successfully");
 		}
 	}
 }

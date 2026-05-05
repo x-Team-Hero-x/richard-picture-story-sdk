@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
@@ -8,20 +7,26 @@ using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor
 {
-	[SuppressMessage("ReSharper", "Unity.RedundantEventFunction")]
-	public abstract class StoryAssetCreatorBase<T> : ScriptableWizard where T : StoryAssetBase
+	public abstract class StoryAssetCreatorBase<T> : StoryAssetCreatorBase where T : StoryAssetBase
+	{
+		protected new T CreatedAsset => (T)base.CreatedAsset;
+		protected sealed override StoryAssetBase CreateEmptyInstance() => CreateInstance<T>();
+	}
+	
+	public abstract class StoryAssetCreatorBase : ScriptableWizard
 	{
 		[HideInInspector] public required EditorStoryInfo editorStoryInfo;
-		protected T CreatedAsset = null!;
+		protected StoryAssetBase CreatedAsset = null!;
 		public string id = null!;
-
+		
+		protected abstract StoryAssetBase CreateEmptyInstance();
 		protected abstract string IdExample { get; }
 		protected abstract string AssetPath { get; }
 		protected abstract string AddressableName { get; }
-
+		
 		protected virtual void OnEnable()
 		{
-			CreatedAsset = CreateInstance<T>();
+			CreatedAsset = CreateEmptyInstance();
 			id = IdExample;
 			OnValidate();
 		}
@@ -43,6 +48,11 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			{
 				throw new ArgumentException($"Asset '{AssetPath}' already exists", nameof(id));
 			}
+		}
+
+		protected virtual void BeforeSave()
+		{
+			CreatedAsset.id = id;
 		}
 
 		protected virtual void OnWizardCreate()
@@ -77,11 +87,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				Selection.activeObject = CreatedAsset;
 				EditorGUIUtility.PingObject(CreatedAsset);
 			};
-		}
-
-		protected virtual void BeforeSave()
-		{
-			CreatedAsset.id = id;
 		}
 
 		protected void SetupLocalizedProperty(LocalizedReference reference, string key)

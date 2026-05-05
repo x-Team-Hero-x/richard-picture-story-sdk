@@ -10,13 +10,14 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 	[CanEditMultipleObjects]
 	public class StoryInfoInspector : UnityEditor.Editor
 	{
-		public EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
-		public StoryInfo StoryInfo => EditorStoryInfo.storyInfo;
+		private EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
+		private StoryInfo StoryInfo => EditorStoryInfo.storyInfo;
 		
 		public override void OnInspectorGUI()
 		{
 			Button("Package and Export", BuildStory);
-			Button("Add character", AddCharacter);
+			CreatorButton<CharacterCreator>("character");
+			// CreatorButton<DialogCreator>("dialog");
 			EditorGUILayout.Space();
 			base.OnInspectorGUI();
 		}
@@ -27,6 +28,18 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 			{
 				EditorApplication.delayCall += action;
 			}
+		}
+
+		private void CreatorButton<TCreator>(string assetKind) where TCreator: StoryAssetCreatorBase
+		{
+			Button(
+				$"Add a {assetKind}",
+				() =>
+				{
+					var creator = ScriptableWizard.DisplayWizard<TCreator>($"Add a {assetKind} to '{StoryInfo.id}'");
+					creator.editorStoryInfo = EditorStoryInfo;
+				}
+			);
 		}
 
 		private void BuildStory()
@@ -45,12 +58,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor
 				Debug.LogError($"Story build for '{StoryInfo.id}' failed after {buildResult.Duration}. {buildResult.Error}.");
 			}
 			Debug.Log($"Story '{StoryInfo.id}' was built successfully");
-		}
-
-		private void AddCharacter()
-		{
-			var characterCreator = ScriptableWizard.DisplayWizard<CharacterCreator>($"Add a character to {StoryInfo.id}");
-			characterCreator.editorStoryInfo = EditorStoryInfo;
 		}
 	}
 }

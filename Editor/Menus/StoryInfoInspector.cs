@@ -20,7 +20,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
 		{
 			Button("Package and Export", () => StoryPackager.Package(StoryId));
 			CreatorButton<CharacterCreator>("character");
-			// CreatorButton<DialogCreator>("dialog");
+			CreatorButton<DialogCreator>("dialog");
 			EditorGUILayout.Space();
 			base.OnInspectorGUI();
 		}

@@ -17,6 +17,7 @@ namespace HeroTeam.RichardPicture.StorySdk.InformationAssets
         public LocalizedString title = new();
         public LocalizedString description = new();
         [HideInInspector] public List<CharacterInfo> characters = new();
+        [HideInInspector] public List<DialogInfo> dialogs = new();
         
         private IResourceLocator? _catalogLocator;
 

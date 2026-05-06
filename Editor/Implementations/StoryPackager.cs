@@ -45,7 +45,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 				try
 				{
 					UpdateFlagsForId(schemas, storyId);
-					BuildAddressables(storyId);
+					BuildAddressables();
 				}
 				finally
 				{
@@ -75,7 +75,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 				}
 			}
 
-			private static void BuildAddressables(string storyId)
+			private static void BuildAddressables()
 			{
 				AddressableAssetSettings.BuildPlayerContent(out var buildResult);
 				if (!string.IsNullOrEmpty(buildResult.Error))

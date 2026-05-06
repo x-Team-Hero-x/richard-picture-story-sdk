@@ -8,7 +8,6 @@ using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
-	// TODO: in each asset, add button to delete it properly!
 	public abstract class StoryAssetCreatorBase<T> : StoryAssetCreatorBase where T : InformationAsset
 	{
 		protected new T CreatedAsset => (T)base.CreatedAsset;

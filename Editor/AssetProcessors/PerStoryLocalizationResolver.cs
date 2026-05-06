@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Localization.Addressables;
 using UnityEngine.Localization;
 using Object = UnityEngine.Object;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
+namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetProcessors
 {
 	[Serializable]
 	public class PerStoryLocalizationResolver : GroupResolver

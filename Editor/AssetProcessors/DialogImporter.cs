@@ -4,9 +4,9 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
+namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetProcessors
 {
-	[ScriptedImporter(5, "dialog")]
+	[ScriptedImporter(7, "dialog")]
 	public class DialogImporter : ScriptedImporter
 	{
 		private static readonly Lazy<Texture2D> TextAssetIcon =

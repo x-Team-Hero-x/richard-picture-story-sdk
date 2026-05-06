@@ -74,12 +74,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			AssetDatabase.CreateAsset(CreatedAsset, AssetPath);
 
 			// Make asset addressable
-			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
 			var path = AssetDatabase.GetAssetPath(CreatedAsset);
-			var assetGuid = AssetDatabase.AssetPathToGUID(path);
-			var storyInfoEntry =
-				addressableSettings.CreateOrMoveEntry(assetGuid, editorStoryInfo.addressableGroup, true);
-			storyInfoEntry.address = AddressableName;
+			MakeAddressable(path, AddressableName);
 
 			// Select newly created object
 			EditorApplication.delayCall += () =>
@@ -88,6 +84,14 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 				Selection.activeObject = CreatedAsset;
 				EditorGUIUtility.PingObject(CreatedAsset);
 			};
+		}
+
+		protected void MakeAddressable(string assetPath, string addressableName)
+		{
+			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
+			var assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
+			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(assetGuid, editorStoryInfo.addressableGroup, true);
+			storyInfoEntry.address = addressableName;
 		}
 
 		protected void SetupLocalizedProperty(LocalizedReference reference, string key)

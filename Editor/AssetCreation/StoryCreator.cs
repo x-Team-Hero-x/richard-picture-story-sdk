@@ -67,6 +67,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			editorStoryInfo.addressableGroup = EditorAddressables.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
 			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection(editorStoryInfo.storyPaths.stringsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
 			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection(editorStoryInfo.storyPaths.assetsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
+			MakeAddressable(editorStoryInfo.storyPaths.assetsFolder, "Assets");
 			
 			// Fill properties
 			base.BeforeSave();

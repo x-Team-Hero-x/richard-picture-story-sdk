@@ -9,8 +9,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	public class DialogCreator : StoryAssetCreatorBase<DialogInfo>
 	{
 		protected override string IdExample => "test_dialog";
-		protected override string AssetPath => $"{editorStoryInfo.storyPaths.dialogFilesFolder}/{id}.asset";
-		protected override string AddressableName => $"Dialogs-{id}";
 
 		protected override void BeforeSave()
 		{
@@ -21,8 +19,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			
 			foreach (var localeTable in editorStoryInfo.assetTable.AssetTables)
 			{
-				var fileName = $"{id}_{localeTable.LocaleIdentifier.Code}.dialog";
-				var filePath = $"{editorStoryInfo.storyPaths.dialogFilesFolder}/{fileName}";
+				var filePath = editorStoryInfo.GetAssetPath($"{id}_{localeTable.LocaleIdentifier.Code}.dialog");
 				
 				// TODO: Creating a lot of files for a lot of languages might take a long time
 				// TODO: Use async versions for File.WriteAllText and AssetDatabase.ImportAsset

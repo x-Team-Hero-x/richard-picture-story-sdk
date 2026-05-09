@@ -17,7 +17,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		public List<Locale> locales = new();
 		
 		protected override string IdExample => "com.example.story";
-		protected override string AssetPath => editorStoryInfo.storyPaths.storyInfoAsset;
+		protected override string RelativeAssetPath => "StoryInfo.asset";
 		protected override string AddressableName => "StoryInfo";
 		
 		private static AddressableAssetSettings EditorAddressables => AddressableAssetSettingsDefaultObject.Settings;
@@ -46,31 +46,35 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		{
 			// Create editor asset
 			editorStoryInfo = CreateInstance<EditorStoryInfo>();
-			editorStoryInfo.storyPaths = new StoryPaths(id);
+			editorStoryInfo.storyInfo = CreatedAsset;
 
 			base.OnWizardCreate();
 			
 			// Save editor asset
-			editorStoryInfo.storyInfo = CreatedAsset;
-			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.storyPaths.editorStoryInfoAsset);
+			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));
 		}
 
 		protected override void BeforeSave()
 		{
 			// Create folder structure
-			foreach (var storySubfolder in editorStoryInfo.storyPaths.AllFolders)
-			{
-				Paths.EnsureFolderExists(storySubfolder);
-			}
+			//TODO: ask user location instead of using hardcoded
+			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}");
+			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Assets");
+			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Localization");
+			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Characters");
+			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Dialogs");
+			
+			// Call base method
+			base.BeforeSave();
 			
 			// Create addressable stuff
 			editorStoryInfo.addressableGroup = EditorAddressables.CreateGroup(id, false, true, true, null, typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
-			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection(editorStoryInfo.storyPaths.stringsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
-			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection(editorStoryInfo.storyPaths.assetsTable, editorStoryInfo.storyPaths.localizationFolder, locales);
-			MakeAddressable(editorStoryInfo.storyPaths.assetsFolder, "Assets");
+			var localizationFolderPath = editorStoryInfo.GetAssetPath("Localization");
+			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection($"{id}.strings", localizationFolderPath, locales);
+			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection($"{id}.assets", localizationFolderPath, locales);
+			MakeAddressable(editorStoryInfo.GetAssetPath("Assets"), "Assets");
 			
 			// Fill properties
-			base.BeforeSave();
 			SetupLocalizedProperty(CreatedAsset.icon, "info.icon");
 			SetupLocalizedProperty(CreatedAsset.title, "info.title");
 			SetupLocalizedProperty(CreatedAsset.description, "info.description");

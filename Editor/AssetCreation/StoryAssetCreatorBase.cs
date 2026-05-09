@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -12,6 +14,14 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	{
 		protected new T CreatedAsset => (T)base.CreatedAsset;
 		protected sealed override InformationAsset CreateEmptyInstance() => CreateInstance<T>();
+
+		private const string TypeSuffix = "Info";
+		private static readonly string TypeName = typeof(T).Name is var name && name.EndsWith(TypeSuffix)
+			? name[..^TypeSuffix.Length]
+			: name;
+		
+		protected override string RelativeAssetPath => $"{TypeName}s/{id}.asset";
+		protected override string AddressableName => $"{TypeName}-{id}";
 	}
 	
 	public abstract class StoryAssetCreatorBase : ScriptableWizard
@@ -22,7 +32,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		
 		protected abstract InformationAsset CreateEmptyInstance();
 		protected abstract string IdExample { get; }
-		protected abstract string AssetPath { get; }
+		protected abstract string RelativeAssetPath { get; }
+		protected string AssetPath => editorStoryInfo.GetAssetPath(RelativeAssetPath);
 		protected abstract string AddressableName { get; }
 		
 		protected virtual void OnEnable()
@@ -65,12 +76,13 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			}
 			catch (ArgumentException exception)
 			{
-				EditorUtility.DisplayDialog($"Wrong value fo '{exception.ParamName}'", exception.Message, "OK");
+				EditorUtility.DisplayDialog($"Wrong value for '{exception.ParamName}'", exception.Message, "OK");
 				throw;
 			}
 
 			// Create asset
 			BeforeSave();
+			Paths.EnsureFolderExists(AssetPath[..AssetPath.LastIndexOf('/')]);
 			AssetDatabase.CreateAsset(CreatedAsset, AssetPath);
 
 			// Make asset addressable

@@ -14,22 +14,25 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetProcessors
 	{
 		public override string GetExpectedGroupName(IList<LocaleIdentifier> locales, Object asset, AddressableAssetSettings aaSettings)
 		{
-			if (asset is Locale)
+			const string storyPrefix = $"{Paths.StoriesFolder}/";
+			var assetPath = AssetDatabase.GetAssetPath(asset);
+			if (!assetPath.StartsWith(storyPrefix))
 			{
-				return "Locales";
+				return base.GetExpectedGroupName(locales, asset, aaSettings);
 			}
 			
-			var path = AssetDatabase.GetAssetPath(asset);
-			const string storyPrefix = $"{Paths.StoriesFolder}/";
-			if (path.StartsWith(storyPrefix))
+			var assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
+			var existingEntry = aaSettings.FindAssetEntry(assetGuid);
+			if (existingEntry is not null)
 			{
-				var start = storyPrefix.Length;
-				var end = path.IndexOf('/', start);
-				var storyId = end < 0 ? path[start..] : path[start..end];
-				return storyId;
+				return existingEntry.parentGroup.Name;
 			}
+			
+			var start = storyPrefix.Length;
+			var end = assetPath.IndexOf('/', start);
+			var storyId = end < 0 ? assetPath[start..] : assetPath[start..end];
+			return storyId;
 
-			return base.GetExpectedGroupName(locales, asset, aaSettings);
 		}
 
 	}

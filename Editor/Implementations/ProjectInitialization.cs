@@ -43,7 +43,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 		private static void CreateAssetFolders()
 		{
 			Paths.EnsureFolderExists(Paths.SdkFolder);
-			Paths.EnsureFolderExists(Paths.StoriesFolder);
 		}
 		
 		private static void CreateAddressableSettings()
@@ -84,7 +83,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 			
 			var instance = ScriptableObject.CreateInstance<AddressableGroupRules>();
 			var resolver = new PerStoryLocalizationResolver();
-			instance.LocaleResolver = resolver;
 			instance.AssetTablesResolver = resolver;
 			instance.AssetResolver = resolver;
 			instance.StringTablesResolver = resolver;

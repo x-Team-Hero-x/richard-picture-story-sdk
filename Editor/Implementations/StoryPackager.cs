@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
@@ -6,27 +7,28 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 	{
 		public static void Package(EditorStoryInfo editorStoryInfo)
 		{
-			var storyId = editorStoryInfo.storyInfo.id;
-			var outputPath = EditorUtility.SaveFilePanel(
+			var userSelectedPath = EditorUtility.SaveFilePanel(
 				"Select output location",
 				null,
-				$"{storyId}.story",
+				$"{editorStoryInfo.storyInfo.id}.story",
 				"story"
 			);
-			var (outputFolder, storyFileName) = Paths.SplitPath(outputPath);
+			var (_, storyFileName) = Paths.SplitPath(userSelectedPath);
 			
 			var build = new AssetBundleBuild
 			{
 				assetBundleName = storyFileName,
 				assetNames = editorStoryInfo.GetAllAssetPaths(),
 			};
+			Paths.EnsureFolderExists(Paths.PackagedStoriesFolder);
 			BuildPipeline.BuildAssetBundles(
-				outputFolder,
+				Paths.PackagedStoriesFolder,
 				new[] { build },
 				BuildAssetBundleOptions.StrictMode,
-				EditorUserBuildSettings.activeBuildTarget
+				EditorUserBuildSettings.activeBuildTarget // TODO: build for more targets?
 			);
-			// TODO: build for more targets
+			var buildCachePath = $"{Paths.PackagedStoriesFolder}/{storyFileName}";
+			File.Copy(buildCachePath, userSelectedPath, true);
 		}
 	}
 }

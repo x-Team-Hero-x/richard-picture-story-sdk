@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEditor;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
@@ -8,17 +9,14 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 		public const string SdkFolder = "Assets/StorySDK";
 		public const string LocalizationSettingsAsset = "Assets/StorySDK/Localization Settings.asset";
 		public const string StoriesFolder = "Assets/StorySDK/Stories";
+		public const string PackagedStoriesFolder = "Library/io.github.x-team-hero-x.richard-picture-story-sdk";
 
 		public static void EnsureFolderExists(string folderPath)
 		{
-			if (folderPath == "Assets")
-			{
-				return;
-			}
-			
 			if (!folderPath.StartsWith("Assets/"))
 			{
-				throw new ArgumentException("Folder should start with 'Assets/'", nameof(folderPath));
+				Directory.CreateDirectory(folderPath);
+				return;
 			}
 			
 			if (AssetDatabase.IsValidFolder(folderPath))

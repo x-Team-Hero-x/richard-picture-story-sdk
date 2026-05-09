@@ -7,9 +7,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 	{
 		public const string SdkFolder = "Assets/StorySDK";
 		public const string LocalizationSettingsAsset = "Assets/StorySDK/Localization Settings.asset";
-		public const string GroupNameResolver = "Assets/StorySDK/GroupNameResolver.asset";
 		public const string StoriesFolder = "Assets/StorySDK/Stories";
-		public const string PackagedStoriesFolder = "Library/com.unity.addressables/aa/Windows";
 
 		public static void EnsureFolderExists(string folderPath)
 		{
@@ -28,11 +26,17 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 				return;
 			}
 			
-			var lastSlashIndex = folderPath.LastIndexOf('/');
-			var parentPath = folderPath[..lastSlashIndex];
-			var folderName = folderPath[(lastSlashIndex+1)..];
+			var (parentPath, folderName) = SplitPath(folderPath);
 			EnsureFolderExists(parentPath);
 			AssetDatabase.CreateFolder(parentPath, folderName);
+		}
+		
+		public static (string parentFolderPath, string name) SplitPath(string path)
+		{
+			var lastSlashIndex = path.LastIndexOf('/');
+			var parentPath = path[..lastSlashIndex];
+			var name = path[(lastSlashIndex+1)..];
+			return (parentPath, name);
 		}
 	}
 }

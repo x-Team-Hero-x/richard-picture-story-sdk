@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetProcessors
+namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	[ScriptedImporter(7, "dialog")]
 	public class DialogImporter : ScriptedImporter

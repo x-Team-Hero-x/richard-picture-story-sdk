@@ -41,7 +41,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 
 		private static string RequestStoryPath()
 		{
-			var path = EditorUtility.OpenFilePanel("Select story bundle", Paths.PackagedStoriesFolder, "json,bin");
+			var path = EditorUtility.OpenFilePanel("Select story bundle", null, "story");
 			return !string.IsNullOrEmpty(path)
 				? path
 				: throw new OperationCanceledException("Story was not selected");

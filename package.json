@@ -4,15 +4,13 @@
 	"displayName": "Richard Picture story SDK",
 	"description": "An SDK to create separately packaged stories",
 	"dependencies": {
-		"com.unity.localization": "1.5.9",
-		"com.unity.addressables": "2.8.0"
+		"com.unity.localization": "1.5.9"
 	},
 	"keywords": [
 		"visual novel",
 		"VN",
 		"story"
 	],
-	"type": "tool",
 	"scripts": {},
 	"author": {
 		"name": "Hero Team",

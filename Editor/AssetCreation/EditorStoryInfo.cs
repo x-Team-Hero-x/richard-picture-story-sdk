@@ -1,8 +1,6 @@
-using System.IO;
 using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Localization;
 using UnityEngine;
 
@@ -14,16 +12,28 @@ namespace HeroTeam.RichardPicture.StorySdk
         [HideInInspector] public required StoryInfo storyInfo;
         [HideInInspector] public required StringTableCollection stringTable;
         [HideInInspector] public required AssetTableCollection assetTable;
-        [HideInInspector] public required AddressableAssetGroup addressableGroup;
 
-        public string GetAssetPath(string storyRelativePath)
+        public string GetStoryFolderPath()
         {
             var thisPath = AssetDatabase.GetAssetPath(this);
             var storyFolderPath = !string.IsNullOrEmpty(thisPath)
-                ? thisPath[..thisPath.LastIndexOf('/')]
+                ? Paths.SplitPath(thisPath).parentFolderPath
                 : $"{Paths.StoriesFolder}/{storyInfo.id}"; //TODO: ask user location instead of using hardcoded
+            return storyFolderPath;
+        }
+
+        public string GetAssetPath(string storyRelativePath)
+        {
+            var storyFolderPath = GetStoryFolderPath();
             var projectRelativePath = $"{storyFolderPath}/{storyRelativePath}";
             return projectRelativePath;
+        }
+
+        public string[] GetAllAssetPaths()
+        {
+            // TODO: check if it is enough
+            var storyFolderPath = GetStoryFolderPath();
+            return new[] { storyFolderPath };
         }
     }
 }

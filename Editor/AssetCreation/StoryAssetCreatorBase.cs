@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
-using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -21,7 +19,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			: name;
 		
 		protected override string RelativeAssetPath => $"{TypeName}s/{id}.asset";
-		protected override string AddressableName => $"{TypeName}-{id}";
 	}
 	
 	public abstract class StoryAssetCreatorBase : ScriptableWizard
@@ -34,7 +31,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		protected abstract string IdExample { get; }
 		protected abstract string RelativeAssetPath { get; }
 		protected string AssetPath => editorStoryInfo.GetAssetPath(RelativeAssetPath);
-		protected abstract string AddressableName { get; }
+		protected abstract void BeforeSave();
 		
 		protected virtual void OnEnable()
 		{
@@ -55,16 +52,12 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			{
 				throw new ArgumentException("Field 'id' can not be empty", nameof(id));
 			}
+			CreatedAsset.id = id;
 
 			if (AssetDatabase.AssetPathExists(AssetPath))
 			{
 				throw new ArgumentException($"Asset '{AssetPath}' already exists", nameof(id));
 			}
-		}
-
-		protected virtual void BeforeSave()
-		{
-			CreatedAsset.id = id;
 		}
 
 		protected virtual void OnWizardCreate()
@@ -82,12 +75,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 
 			// Create asset
 			BeforeSave();
-			Paths.EnsureFolderExists(AssetPath[..AssetPath.LastIndexOf('/')]);
+			var (assetParentFolder, _) = Paths.SplitPath(AssetPath);
+			Paths.EnsureFolderExists(assetParentFolder);
 			AssetDatabase.CreateAsset(CreatedAsset, AssetPath);
-
-			// Make asset addressable
-			var path = AssetDatabase.GetAssetPath(CreatedAsset);
-			MakeAddressable(path, AddressableName);
 
 			// Select newly created object
 			EditorApplication.delayCall += () =>
@@ -96,14 +86,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 				Selection.activeObject = CreatedAsset;
 				EditorGUIUtility.PingObject(CreatedAsset);
 			};
-		}
-
-		protected void MakeAddressable(string assetPath, string addressableName)
-		{
-			var addressableSettings = AddressableAssetSettingsDefaultObject.Settings;
-			var assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
-			var storyInfoEntry = addressableSettings.CreateOrMoveEntry(assetGuid, editorStoryInfo.addressableGroup, true);
-			storyInfoEntry.address = addressableName;
 		}
 
 		protected void SetupLocalizedProperty(LocalizedReference reference, string key)

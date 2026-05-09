@@ -2,7 +2,6 @@ using System.IO;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
@@ -12,7 +11,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 
 		protected override void BeforeSave()
 		{
-			base.BeforeSave();
 			var key = $"dialogs.{id}";
 			SetupLocalizedProperty(CreatedAsset.dialogFile, key);
 			editorStoryInfo.storyInfo.dialogs.Add(CreatedAsset);

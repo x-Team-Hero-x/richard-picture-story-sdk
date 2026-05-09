@@ -1,9 +1,6 @@
-using HeroTeam.RichardPicture.StorySdk.Editor.AssetProcessors;
 using HeroTeam.RichardPicture.StorySdk.Editor.Menus;
 using UnityEditor;
-using UnityEditor.AddressableAssets;
 using UnityEditor.Localization;
-using UnityEditor.Localization.Addressables;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -34,20 +31,13 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 		private static void Initialize()
 		{
 			CreateAssetFolders();
-			CreateAddressableSettings();
 			CreateLocalizationSettings();
 			RegisterLocales();
-			CreateGroupNameResolver();
 		}
 		
 		private static void CreateAssetFolders()
 		{
 			Paths.EnsureFolderExists(Paths.SdkFolder);
-		}
-		
-		private static void CreateAddressableSettings()
-		{
-			_ = AddressableAssetSettingsDefaultObject.GetSettings(true);
 		}
 		
 		private static void CreateLocalizationSettings()
@@ -72,23 +62,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 				LocalizationEditorSettings.AddLocale(locale);
 			}
 			AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-		}
-		
-		private static void CreateGroupNameResolver()
-		{
-			if (AssetDatabase.AssetPathExists(Paths.GroupNameResolver))
-			{
-				return;
-			}
-			
-			var instance = ScriptableObject.CreateInstance<AddressableGroupRules>();
-			var resolver = new PerStoryLocalizationResolver();
-			instance.AssetTablesResolver = resolver;
-			instance.AssetResolver = resolver;
-			instance.StringTablesResolver = resolver;
-
-			AssetDatabase.CreateAsset(instance, Paths.GroupNameResolver);
-			AddressableGroupRules.Instance = instance;
 		}
 	}
 }

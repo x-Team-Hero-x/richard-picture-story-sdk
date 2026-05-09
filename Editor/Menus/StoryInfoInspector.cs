@@ -1,10 +1,6 @@
 using HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation;
 using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
-using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
-using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
@@ -14,11 +10,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
 	public class StoryInfoInspector : UnityEditor.Editor
 	{
 		private EditorStoryInfo EditorStoryInfo => (EditorStoryInfo)target;
-		private string StoryId => EditorStoryInfo.storyInfo.id;
 		
 		public override void OnInspectorGUI()
 		{
-			Button("Package and Export", () => StoryPackager.Package(StoryId));
+			Button("Package and Export", () => StoryPackager.Package(EditorStoryInfo));
 			CreatorButton<CharacterCreator>("character");
 			CreatorButton<DialogCreator>("dialog");
 			EditorGUILayout.Space();
@@ -39,7 +34,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Menus
 				$"Add a {assetKind}",
 				() =>
 				{
-					var creator = ScriptableWizard.DisplayWizard<TCreator>($"Add a {assetKind} to '{StoryId}'");
+					var creator = ScriptableWizard.DisplayWizard<TCreator>($"Add a {assetKind} to '{EditorStoryInfo.storyInfo.id}'");
 					creator.editorStoryInfo = EditorStoryInfo;
 				}
 			);

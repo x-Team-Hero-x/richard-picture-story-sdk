@@ -9,12 +9,16 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	{
 		protected override string IdExample => "test_dialog";
 
-		protected override void BeforeSave()
+		protected override void OnBeforeCreate()
 		{
+			base.OnBeforeCreate();
+			
+			// Setup reference
 			var key = $"dialogs.{id}";
 			SetupLocalizedProperty(CreatedAsset.dialogFile, key);
 			editorStoryInfo.storyInfo.dialogs.Add(CreatedAsset);
 			
+			// Create .dialog files
 			foreach (var localeTable in editorStoryInfo.assetTable.AssetTables)
 			{
 				var filePath = editorStoryInfo.GetAssetPath($"{id}_{localeTable.LocaleIdentifier.Code}.dialog");

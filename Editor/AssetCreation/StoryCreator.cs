@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
@@ -11,6 +12,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	public class StoryCreator : StoryAssetCreatorBase<StoryInfo>
 	{
 		public List<Locale> locales = new();
+		public DefaultAsset parentFolder = null!;
 		
 		protected override string IdExample => "com.example.story";
 		protected override string RelativeAssetPath => "StoryInfo.asset";
@@ -18,50 +20,59 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		protected override void OnValidate()
 		{
 			base.OnValidate();
+			
 			locales = locales.Where(locale => locale is not null).ToList();
 			if (locales.Count == 0)
 			{
 				locales.Add(ProjectInitialization.DefaultLocale);
 			}
+
+			var parentPath = AssetDatabase.GetAssetPath(parentFolder);
+			if (!AssetDatabase.IsValidFolder(parentPath))
+			{
+				parentFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>("Assets");
+			}
 		}
 
-		protected override void CheckInputs()
-		{
-			base.CheckInputs();
-			locales = locales.Distinct().ToList();
-		}
-
-		protected override void OnWizardCreate()
+		protected override void OnBeforeCreate()
 		{
 			// Create editor asset
 			editorStoryInfo = CreateInstance<EditorStoryInfo>();
 			editorStoryInfo.storyInfo = CreatedAsset;
-
-			base.OnWizardCreate();
+			editorStoryInfo.parentFolder = parentFolder;
 			
-			// Save editor asset
-			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));
-		}
-
-		protected override void BeforeSave()
-		{
-			// Create folder structure
-			//TODO: ask user location instead of using hardcoded
-			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}");
-			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Assets");
-			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Localization");
-			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Characters");
-			Paths.EnsureFolderExists($"{Paths.StoriesFolder}/{id}/Dialogs");
+			base.OnBeforeCreate();
+			
+			// Validate localization tables (strings)
+			var stringTableKey = $"{id}.strings";
+			var existingStringTable = LocalizationEditorSettings.GetStringTableCollection(stringTableKey);
+			if (existingStringTable is not null)
+			{
+				throw new ArgumentException($"Localization table '{stringTableKey}' already exists", nameof(id));
+			}
+			
+			// Validate localization tables (assets)
+			var assetTableKey = $"{id}.assets";
+			var existingAssetTable = LocalizationEditorSettings.GetAssetTableCollection(assetTableKey);
+			if (existingAssetTable is not null)
+			{
+				throw new ArgumentException($"Localization table '{assetTableKey}' already exists", nameof(id));
+			}
 			
 			// Create localization tables
+			locales = locales.Distinct().ToList();
 			var localizationFolderPath = editorStoryInfo.GetAssetPath("Localization");
-			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection($"{id}.strings", localizationFolderPath, locales);
-			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection($"{id}.assets", localizationFolderPath, locales);
+			Paths.EnsureFolderExists(localizationFolderPath);
+			editorStoryInfo.stringTable = LocalizationEditorSettings.CreateStringTableCollection(stringTableKey, localizationFolderPath, locales);
+			editorStoryInfo.assetTable = LocalizationEditorSettings.CreateAssetTableCollection(assetTableKey, localizationFolderPath, locales);
 			
 			// Fill properties
 			SetupLocalizedProperty(CreatedAsset.icon, "info.icon");
 			SetupLocalizedProperty(CreatedAsset.title, "info.title");
 			SetupLocalizedProperty(CreatedAsset.description, "info.description");
+			
+			// Save editor asset
+			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));
 		}
 	}
 }

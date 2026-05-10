@@ -6,8 +6,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	{
 		protected override string IdExample => "test_character";
 
-		protected override void BeforeSave()
+		protected override void OnBeforeCreate()
 		{
+			base.OnBeforeCreate();
 			SetupLocalizedProperty(CreatedAsset.spritePrefab, $"characters.{id}.sprite");
 			SetupLocalizedProperty(CreatedAsset.displayName, $"characters.{id}.name");
 			editorStoryInfo.storyInfo.characters.Add(CreatedAsset);

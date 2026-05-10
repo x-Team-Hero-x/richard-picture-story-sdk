@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 
@@ -13,12 +14,16 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 				$"{editorStoryInfo.storyInfo.id}.story",
 				"story"
 			);
+			if (userSelectedPath == "")
+			{
+				throw new OperationCanceledException("No story file selected");
+			}
 			var (_, storyFileName) = Paths.SplitPath(userSelectedPath);
 			
 			var build = new AssetBundleBuild
 			{
 				assetBundleName = storyFileName,
-				assetNames = editorStoryInfo.GetAllAssetPaths(),
+				assetNames = editorStoryInfo.GetAssetPathsToBuild(),
 			};
 			Paths.EnsureFolderExists(Paths.PackagedStoriesFolder);
 			BuildPipeline.BuildAssetBundles(

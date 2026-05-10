@@ -30,14 +30,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 		
 		private static void Initialize()
 		{
-			CreateAssetFolders();
 			CreateLocalizationSettings();
 			RegisterLocales();
-		}
-		
-		private static void CreateAssetFolders()
-		{
-			Paths.EnsureFolderExists(Paths.SdkFolder);
 		}
 		
 		private static void CreateLocalizationSettings()

@@ -1,4 +1,3 @@
-using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEditor.Localization;
@@ -12,28 +11,19 @@ namespace HeroTeam.RichardPicture.StorySdk
         [HideInInspector] public required StoryInfo storyInfo;
         [HideInInspector] public required StringTableCollection stringTable;
         [HideInInspector] public required AssetTableCollection assetTable;
-
-        public string GetStoryFolderPath()
-        {
-            var thisPath = AssetDatabase.GetAssetPath(this);
-            var storyFolderPath = !string.IsNullOrEmpty(thisPath)
-                ? Paths.SplitPath(thisPath).parentFolderPath
-                : $"{Paths.StoriesFolder}/{storyInfo.id}"; //TODO: ask user location instead of using hardcoded
-            return storyFolderPath;
-        }
+        [HideInInspector] public required DefaultAsset parentFolder;
+        public string StoryFolderPath => $"{AssetDatabase.GetAssetPath(parentFolder)}/{storyInfo.id}";
 
         public string GetAssetPath(string storyRelativePath)
         {
-            var storyFolderPath = GetStoryFolderPath();
-            var projectRelativePath = $"{storyFolderPath}/{storyRelativePath}";
+            var projectRelativePath = $"{StoryFolderPath}/{storyRelativePath}";
             return projectRelativePath;
         }
 
-        public string[] GetAllAssetPaths()
+        public string[] GetAssetPathsToBuild()
         {
-            // TODO: check if it is enough
-            var storyFolderPath = GetStoryFolderPath();
-            return new[] { storyFolderPath };
+            // TODO: exclude all editor assets to prevent warnings
+            return new[] { StoryFolderPath };
         }
     }
 }

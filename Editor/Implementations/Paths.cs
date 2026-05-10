@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using UnityEditor;
 
@@ -6,9 +5,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.Implementations
 {
 	public static class Paths
 	{
-		public const string SdkFolder = "Assets/StorySDK";
-		public const string LocalizationSettingsAsset = "Assets/StorySDK/Localization Settings.asset";
-		public const string StoriesFolder = "Assets/StorySDK/Stories";
+		public const string LocalizationSettingsAsset = "Assets/LocalizationSettings.asset";
 		public const string PackagedStoriesFolder = "Library/io.github.x-team-hero-x.richard-picture-story-sdk";
 
 		public static void EnsureFolderExists(string folderPath)

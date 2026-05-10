@@ -26,12 +26,11 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		[HideInInspector] public required EditorStoryInfo editorStoryInfo;
 		protected InformationAsset CreatedAsset = null!;
 		public string id = null!;
+		private string _assetPath = null!;
 		
 		protected abstract InformationAsset CreateEmptyInstance();
 		protected abstract string IdExample { get; }
 		protected abstract string RelativeAssetPath { get; }
-		protected string AssetPath => editorStoryInfo.GetAssetPath(RelativeAssetPath);
-		protected abstract void BeforeSave();
 		
 		protected virtual void OnEnable()
 		{
@@ -45,8 +44,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 
 		}
 
-		protected virtual void CheckInputs()
+		protected virtual void OnBeforeCreate()
 		{
+			// Validate id
 			id = id.Trim();
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -54,18 +54,25 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			}
 			CreatedAsset.id = id;
 
-			if (AssetDatabase.AssetPathExists(AssetPath))
+			// Validate asset path
+			_assetPath = editorStoryInfo.GetAssetPath(RelativeAssetPath);
+			if (AssetDatabase.AssetPathExists(_assetPath))
 			{
-				throw new ArgumentException($"Asset '{AssetPath}' already exists", nameof(id));
+				throw new ArgumentException($"Asset '{_assetPath}' already exists", nameof(id));
 			}
 		}
 
-		protected virtual void OnWizardCreate()
+		protected virtual void OnAfterCreate()
 		{
-			// Check inputs
+			
+		}
+
+		protected void OnWizardCreate()
+		{
+			// Custom callback - check inputs, fill asset values, etc
 			try
 			{
-				CheckInputs();
+				OnBeforeCreate();
 			}
 			catch (ArgumentException exception)
 			{
@@ -74,10 +81,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			}
 
 			// Create asset
-			BeforeSave();
-			var (assetParentFolder, _) = Paths.SplitPath(AssetPath);
+			var (assetParentFolder, _) = Paths.SplitPath(_assetPath);
 			Paths.EnsureFolderExists(assetParentFolder);
-			AssetDatabase.CreateAsset(CreatedAsset, AssetPath);
+			AssetDatabase.CreateAsset(CreatedAsset, _assetPath);
 
 			// Select newly created object
 			EditorApplication.delayCall += () =>

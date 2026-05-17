@@ -17,8 +17,8 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 		private static readonly string TypeName = typeof(T).Name is var name && name.EndsWith(TypeSuffix)
 			? name[..^TypeSuffix.Length]
 			: name;
-		
-		protected override string RelativeAssetPath => $"{TypeName}s/{id}.asset";
+		protected string ParentFolderRelativePath => $"{TypeName}s"; 
+		protected override string RelativeAssetPath => $"{ParentFolderRelativePath}/{id}.asset";
 	}
 	
 	public abstract class StoryAssetCreatorBase : ScriptableWizard

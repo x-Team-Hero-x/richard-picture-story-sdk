@@ -1,4 +1,5 @@
 using System.IO;
+using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEngine;
@@ -19,9 +20,10 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			editorStoryInfo.storyInfo.dialogs.Add(CreatedAsset);
 			
 			// Create .dialog files
+			Paths.EnsureFolderExists(editorStoryInfo.GetAssetPath(ParentFolderRelativePath));
 			foreach (var localeTable in editorStoryInfo.assetTable.AssetTables)
 			{
-				var filePath = editorStoryInfo.GetAssetPath($"{id}_{localeTable.LocaleIdentifier.Code}.dialog");
+				var filePath = editorStoryInfo.GetAssetPath($"{ParentFolderRelativePath}/{id}_{localeTable.LocaleIdentifier.Code}.dialog");
 				
 				// TODO: Creating a lot of files for a lot of languages might take a long time
 				// TODO: Use async versions for File.WriteAllText and AssetDatabase.ImportAsset

@@ -62,11 +62,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			}
 		}
 
-		protected virtual void OnAfterCreate()
-		{
-			
-		}
-
 		protected void OnWizardCreate()
 		{
 			// Custom callback - check inputs, fill asset values, etc

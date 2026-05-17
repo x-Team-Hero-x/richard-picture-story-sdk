@@ -10,7 +10,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 {
 	public abstract class StoryAssetCreatorBase<T> : StoryAssetCreatorBase where T : InformationAsset
 	{
-		protected new T CreatedAsset => (T)base.CreatedAsset;
+		public new T CreatedAsset => (T)base.CreatedAsset;
+		public new T CreateAsset() => (T)base.CreateAsset();
+		
 		protected sealed override InformationAsset CreateEmptyInstance() => CreateInstance<T>();
 
 		private const string TypeSuffix = "Info";
@@ -64,6 +66,12 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 
 		protected void OnWizardCreate()
 		{
+			CreateAsset();
+			RevealAsset();
+		}
+
+		public InformationAsset CreateAsset()
+		{
 			// Custom callback - check inputs, fill asset values, etc
 			try
 			{
@@ -75,12 +83,15 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 				throw;
 			}
 
-			// Create asset
+			// Make asset persistent
 			var (assetParentFolder, _) = Paths.SplitPath(_assetPath);
 			Paths.EnsureFolderExists(assetParentFolder);
 			AssetDatabase.CreateAsset(CreatedAsset, _assetPath);
+			return CreatedAsset;
+		}
 
-			// Select newly created object
+		private void RevealAsset()
+		{
 			EditorApplication.delayCall += () =>
 			{
 				EditorUtility.FocusProjectWindow();

@@ -5,6 +5,7 @@ using HeroTeam.RichardPicture.StorySdk.Editor.Implementations;
 using HeroTeam.RichardPicture.StorySdk.InformationAssets;
 using UnityEditor;
 using UnityEditor.Localization;
+using UnityEngine;
 using UnityEngine.Localization;
 
 namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
@@ -13,6 +14,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 	{
 		public List<Locale> locales = new();
 		public DefaultAsset parentFolder = null!;
+		[HideInInspector] public string initialDialogId = "initial_dialog";
 		
 		protected override string IdExample => "com.example.story";
 		protected override string RelativeAssetPath => "StoryInfo.asset";
@@ -70,6 +72,13 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			SetupLocalizedProperty(CreatedAsset.icon, "info.icon");
 			SetupLocalizedProperty(CreatedAsset.title, "info.title");
 			SetupLocalizedProperty(CreatedAsset.description, "info.description");
+			
+			// Create initial dialog
+			var dialogCreator = CreateInstance<DialogCreator>();
+			dialogCreator.editorStoryInfo = editorStoryInfo;
+			dialogCreator.id = initialDialogId;
+			CreatedAsset.initialDialog = dialogCreator.CreateAsset();
+			DestroyImmediate(dialogCreator);
 			
 			// Save editor asset
 			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));

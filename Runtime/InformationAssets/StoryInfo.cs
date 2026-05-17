@@ -14,6 +14,7 @@ namespace HeroTeam.RichardPicture.StorySdk.InformationAssets
         public LocalizedString description = new();
         [HideInInspector] public List<CharacterInfo> characters = new();
         [HideInInspector] public List<DialogInfo> dialogs = new();
+        [HideInInspector] public required DialogInfo initialDialog;
         
         private AssetBundle? _assetBundle;
 

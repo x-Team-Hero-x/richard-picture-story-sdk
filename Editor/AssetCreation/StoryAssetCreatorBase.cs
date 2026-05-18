@@ -91,8 +91,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			// Add asset to story
 			editorStoryInfo.storyInfo.informationAssets.Add(CreatedAsset);
 			EditorUtility.SetDirty(editorStoryInfo.storyInfo);
-			AssetDatabase.SaveAssetIfDirty(editorStoryInfo.storyInfo);
 			
+			// Save assets and return
+			AssetDatabase.SaveAssets();
 			return CreatedAsset;
 		}
 
@@ -113,6 +114,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 				: editorStoryInfo.assetTable;
 			var entry = table.SharedData.AddKey(key);
 			reference.SetReference(table.TableCollectionNameReference, entry.Key);
+			EditorUtility.SetDirty(table.SharedData);
 		}
 	}
 }

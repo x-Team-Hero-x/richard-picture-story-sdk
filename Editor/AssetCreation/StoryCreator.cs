@@ -81,7 +81,11 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			DestroyImmediate(dialogCreator);
 			
 			// Save editor asset
-			AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));
+			// (delay is needed for runtime story info reference to serialize correctly)
+			EditorApplication.delayCall += () =>
+			{
+				AssetDatabase.CreateAsset(editorStoryInfo, editorStoryInfo.GetAssetPath("EditorStoryInfo.asset"));
+			};
 		}
 	}
 }

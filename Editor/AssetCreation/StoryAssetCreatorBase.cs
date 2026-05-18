@@ -90,6 +90,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			
 			// Add asset to story
 			editorStoryInfo.storyInfo.informationAssets.Add(CreatedAsset);
+			EditorUtility.SetDirty(editorStoryInfo.storyInfo);
+			AssetDatabase.SaveAssetIfDirty(editorStoryInfo.storyInfo);
+			
 			return CreatedAsset;
 		}
 

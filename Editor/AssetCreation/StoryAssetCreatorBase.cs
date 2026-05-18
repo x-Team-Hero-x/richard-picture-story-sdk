@@ -87,6 +87,9 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			var (assetParentFolder, _) = Paths.SplitPath(_assetPath);
 			Paths.EnsureFolderExists(assetParentFolder);
 			AssetDatabase.CreateAsset(CreatedAsset, _assetPath);
+			
+			// Add asset to story
+			editorStoryInfo.storyInfo.informationAssets.Add(CreatedAsset);
 			return CreatedAsset;
 		}
 

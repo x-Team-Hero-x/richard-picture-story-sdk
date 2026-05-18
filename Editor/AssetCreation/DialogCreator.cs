@@ -17,7 +17,6 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			// Setup reference
 			var key = $"dialogs.{id}";
 			SetupLocalizedProperty(CreatedAsset.dialogFile, key);
-			editorStoryInfo.storyInfo.dialogs.Add(CreatedAsset);
 			
 			// Create .dialog files
 			Paths.EnsureFolderExists(editorStoryInfo.GetAssetPath(ParentFolderRelativePath));

@@ -1,6 +1,6 @@
 {
 	"name": "io.github.x-team-hero-x.richard-picture-story-sdk",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"displayName": "Richard Picture story SDK",
 	"description": "An SDK to create separately packaged stories",
 	"dependencies": {

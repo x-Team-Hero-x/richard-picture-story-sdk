@@ -21,7 +21,7 @@ namespace HeroTeam.RichardPicture.StorySdk.InformationAssets
         
         #region Lifecycle
         
-        private AssetBundle? _assetBundle;
+        private AssetBundle? _assetBundle = null;
 
         public static async Task<StoryInfo> FromStoryFile(string path)
         {

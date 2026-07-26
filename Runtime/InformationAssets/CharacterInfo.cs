@@ -8,5 +8,6 @@ namespace HeroTeam.RichardPicture.StorySdk.InformationAssets
 	{
 		public LocalizedAsset<GameObject> spritePrefab = new();
 		public LocalizedString displayName = new();
+		public LocalizedAsset<Texture2D> displayNameImage = new();
 	}
 }

@@ -11,6 +11,7 @@ namespace HeroTeam.RichardPicture.StorySdk.Editor.AssetCreation
 			base.OnBeforeCreate();
 			SetupLocalizedProperty(CreatedAsset.spritePrefab, $"characters.{id}.sprite");
 			SetupLocalizedProperty(CreatedAsset.displayName, $"characters.{id}.name");
+			SetupLocalizedProperty(CreatedAsset.displayNameImage, $"characters.{id}.nameImage");
 		}
 	}
 }
